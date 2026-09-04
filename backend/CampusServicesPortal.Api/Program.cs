@@ -30,6 +30,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Authentication dependencies
 builder.Services.AddScoped<StudentRepository>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<StudentService>();
 builder.Services.AddScoped<JwtTokenService>();
 
 // Angular CORS
