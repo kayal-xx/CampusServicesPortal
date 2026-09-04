@@ -1,4 +1,8 @@
 using CampusServicesPortal.Api.Data;
+using CampusServicesPortal.Api.Interfaces.Repositories;
+using CampusServicesPortal.Api.Interfaces.Services;
+using CampusServicesPortal.Api.Repositories;
+using CampusServicesPortal.Api.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +18,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         builder.Configuration.GetConnectionString("DefaultConnection")
     )
 );
+
+// Event module dependency injection
+builder.Services.AddScoped<IEventRepository, EventRepository>();
+builder.Services.AddScoped<IEventService, EventService>();
 
 var app = builder.Build();
 
