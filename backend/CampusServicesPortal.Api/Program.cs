@@ -9,10 +9,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
+// OpenAPI and Swagger
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// SQL Server and Entity Framework Core
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")
@@ -22,6 +24,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Event module dependency injection
 builder.Services.AddScoped<IEventRepository, EventRepository>();
 builder.Services.AddScoped<IEventService, EventService>();
+
+// Complaint module dependency injection
+builder.Services.AddScoped<IComplaintRepository, ComplaintRepository>();
+builder.Services.AddScoped<IComplaintService, ComplaintService>();
 
 var app = builder.Build();
 
