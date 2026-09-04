@@ -29,6 +29,10 @@ builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<IComplaintRepository, ComplaintRepository>();
 builder.Services.AddScoped<IComplaintService, ComplaintService>();
 
+// Certificate module dependency injection
+builder.Services.AddScoped<ICertificateRepository, CertificateRepository>();
+builder.Services.AddScoped<ICertificateService, CertificateService>();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
