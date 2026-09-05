@@ -1,4 +1,3 @@
-// FeePayment.cs
 namespace CampusServicesPortal.Api.Entities;
 
 public class FeePayment
@@ -11,7 +10,7 @@ public class FeePayment
 
     public decimal Amount { get; set; }
 
-    public bool IsPaid { get; set; }
+    public bool IsPaid { get; set; } = false;
 
     public DateTime? PaidAt { get; set; }
 
