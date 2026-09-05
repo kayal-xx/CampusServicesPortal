@@ -1,5 +1,7 @@
 using System.Text;
 using CampusServicesPortal.Api.Data;
+using CampusServicesPortal.Api.Interfaces.Repositories;
+using CampusServicesPortal.Api.Interfaces.Services;
 using CampusServicesPortal.Api.Repositories;
 using CampusServicesPortal.Api.Security;
 using CampusServicesPortal.Api.Services;
@@ -12,7 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Controllers
 builder.Services.AddControllers();
 
-// Swagger
+// OpenAPI and Swagger
+builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -27,11 +30,30 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString);
 });
 
-// Authentication dependencies
+// Member 1 dependencies
 builder.Services.AddScoped<StudentRepository>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<StudentService>();
 builder.Services.AddScoped<JwtTokenService>();
+
+// Member 2 Event dependencies
+builder.Services.AddScoped<IEventRepository, EventRepository>();
+builder.Services.AddScoped<IEventService, EventService>();
+
+// Member 2 Complaint dependencies
+builder.Services.AddScoped<IComplaintRepository, ComplaintRepository>();
+builder.Services.AddScoped<IComplaintService, ComplaintService>();
+
+// Member 2 Certificate dependencies
+builder.Services.AddScoped<
+    ICertificateRepository,
+    CertificateRepository
+>();
+
+builder.Services.AddScoped<
+    ICertificateService,
+    CertificateService
+>();
 
 // Angular CORS
 builder.Services.AddCors(options =>
@@ -45,7 +67,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-// JWT authentication
+// JWT Authentication
 var jwtKey = builder.Configuration["Jwt:Key"]
     ?? throw new InvalidOperationException(
         "JWT key is not configured."
@@ -82,9 +104,10 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-// Swagger UI
+// OpenAPI and Swagger UI
 if (app.Environment.IsDevelopment())
 {
+    app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
