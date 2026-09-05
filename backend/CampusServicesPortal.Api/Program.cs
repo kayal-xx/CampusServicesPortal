@@ -71,6 +71,16 @@ builder.Services.AddScoped<
     IFeeService, 
     FeeService
     >();
+builder.Services.AddScoped<
+    INotificationRepository, 
+    NotificationRepository
+    >();
+
+
+builder.Services.AddScoped<
+    INotificationService, 
+    NotificationService
+    >();
 
 // Angular CORS
 builder.Services.AddCors(options =>
