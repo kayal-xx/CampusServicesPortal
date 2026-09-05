@@ -50,10 +50,27 @@ builder.Services.AddScoped<
     CertificateRepository
 >();
 
+// Member 3 Fee dependencies
+builder.Services.AddScoped<
+    IFeeRepository, 
+    FeeRepository
+    >();
+
 builder.Services.AddScoped<
     ICertificateService,
     CertificateService
 >();
+
+builder.Services.AddScoped<
+    IFeeRepository, 
+    FeeRepository
+    >();
+
+
+builder.Services.AddScoped<
+    IFeeService, 
+    FeeService
+    >();
 
 // Angular CORS
 builder.Services.AddCors(options =>
