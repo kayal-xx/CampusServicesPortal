@@ -8,7 +8,7 @@ using CampusServicesPortal.Api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-
+using Microsoft.OpenApi;
 var builder = WebApplication.CreateBuilder(args);
 
 // Controllers
@@ -17,8 +17,31 @@ builder.Services.AddControllers();
 // OpenAPI and Swagger
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition(
+        "bearer",
+        new OpenApiSecurityScheme
+        {
+            Type = SecuritySchemeType.Http,
+            Scheme = "bearer",
+            BearerFormat = "JWT",
+            Description = "Enter the JWT token."
+        }
+    );
 
+    options.AddSecurityRequirement(document =>
+        new OpenApiSecurityRequirement
+        {
+            [
+                new OpenApiSecuritySchemeReference(
+                    "bearer",
+                    document
+                )
+            ] = []
+        }
+    );
+});
 // Database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
@@ -36,6 +59,8 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<StudentService>();
 builder.Services.AddScoped<JwtTokenService>();
 
+builder.Services.AddScoped<HostelRepository>();
+builder.Services.AddScoped<HostelService>();
 // Member 2 Event dependencies
 builder.Services.AddScoped<IEventRepository, EventRepository>();
 builder.Services.AddScoped<IEventService, EventService>();
