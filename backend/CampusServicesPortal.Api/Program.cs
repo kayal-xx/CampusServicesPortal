@@ -82,6 +82,11 @@ builder.Services.AddScoped<
     NotificationService
     >();
 
+builder.Services.AddScoped<
+    IDashboardService, 
+    DashboardService>
+    ();
+
 // Angular CORS
 builder.Services.AddCors(options =>
 {
