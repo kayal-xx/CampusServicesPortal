@@ -1,1 +1,434 @@
-<p>event-list works!</p>
+<div class="portal-layout">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">▣</div>
+      <div>
+        <strong>Campus Services</strong>
+        <span>Portal</span>
+      </div>
+    </div>
+
+    <p class="menu-title">STUDENT PORTAL</p>
+
+    <nav class="sidebar-nav">
+      <a href="#">⌂ <span>Dashboard</span></a>
+      <a href="#">♙ <span>My Profile</span></a>
+      <a href="#">▤ <span>Hostel</span></a>
+      <a href="#">♜ <span>Lab Reservations</span></a>
+      <a class="active" href="/events">▣ <span>Events</span></a>
+      <a href="#">△ <span>Complaints</span></a>
+      <a href="#">▧ <span>Certificates</span></a>
+      <a href="#">▤ <span>Fees & Payments</span></a>
+      <a href="#">♧ <span>Notifications</span></a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <a href="#">⚙ <span>Settings</span></a>
+      <a href="#">↪ <span>Logout</span></a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div class="breadcrumb">
+        <strong>Events</strong>
+        <span>/ Faculty of Computing</span>
+      </div>
+
+      <div class="topbar-actions">
+        <div class="top-search">
+          <span>⌕</span>
+          <input type="text" placeholder="Search..." />
+        </div>
+
+        <button
+          class="notification-button"
+          type="button"
+          aria-label="Notifications"
+        >
+          ♧
+          <span class="notification-dot"></span>
+        </button>
+
+        <div class="user-profile">
+          <div class="avatar">K</div>
+          <div>
+            <strong>Kavindra</strong>
+            <span>Student</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="events-content">
+      <div class="page-heading">
+        <div>
+          <h1>Campus Events</h1>
+          <p>
+            Discover and register for upcoming university events.
+          </p>
+        </div>
+
+        <div class="event-count">
+          {{ filteredEvents.length }} events found
+        </div>
+      </div>
+
+      <div class="event-toolbar">
+        <div class="event-search">
+          <span>⌕</span>
+
+          <input
+            type="search"
+            [(ngModel)]="searchText"
+            placeholder="Search events..."
+          />
+        </div>
+
+        <div class="filter-buttons">
+          <button
+            type="button"
+            [class.active]="activeFilter === 'all'"
+            (click)="setFilter('all')"
+          >
+            All
+          </button>
+
+          <button
+            type="button"
+            [class.active]="activeFilter === 'upcoming'"
+            (click)="setFilter('upcoming')"
+          >
+            Upcoming
+          </button>
+
+          <button
+            type="button"
+            [class.active]="activeFilter === 'past'"
+            (click)="setFilter('past')"
+          >
+            Past
+          </button>
+        </div>
+      </div>
+
+      <div
+        *ngIf="successMessage"
+        class="message success-message"
+      >
+        ✓ {{ successMessage }}
+      </div>
+
+      <div
+        *ngIf="errorMessage"
+        class="message error-message"
+      >
+        ⚠ {{ errorMessage }}
+      </div>
+
+      <div *ngIf="isLoading" class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading events...</p>
+      </div>
+
+      <div
+        *ngIf="!isLoading && filteredEvents.length === 0"
+        class="empty-state"
+      >
+        <div class="empty-icon">▣</div>
+        <h2>No events found</h2>
+        <p>Try changing your search or event filter.</p>
+      </div>
+
+      <div
+        *ngIf="!isLoading && filteredEvents.length > 0"
+        class="events-grid"
+      >
+        <article
+          *ngFor="let event of filteredEvents; let index = index"
+          class="event-card"
+        >
+          <div
+            class="event-image"
+            [ngClass]="imageClass(index)"
+          >
+            <span class="category-badge">
+              {{ index % 2 === 0 ? 'Academic' : 'Workshop' }}
+            </span>
+
+            <span
+              *ngIf="isRegistered(event.id)"
+              class="registration-badge registered"
+            >
+              ✓ Registered
+            </span>
+
+            <span
+              *ngIf="!isRegistered(event.id) && event.isFull"
+              class="registration-badge full"
+            >
+              Full
+            </span>
+
+            <div class="image-decoration">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+
+          <div class="event-body">
+            <h2>{{ event.title }}</h2>
+
+            <div class="event-meta">
+              <p>
+                <span class="meta-icon">▣</span>
+                {{ event.eventDate | date:'MMM d, y · h:mm a' }}
+              </p>
+
+              <p>
+                <span class="meta-icon">⌖</span>
+                {{ event.venue }}
+              </p>
+
+              <p>
+                <span class="meta-icon">♙</span>
+                {{ event.registeredCount }} /
+                {{ event.capacity }} registered
+              </p>
+            </div>
+
+            <div class="capacity">
+              <div class="capacity-track">
+                <div
+                  class="capacity-progress"
+                  [style.width.%]="registrationPercentage(event)"
+                ></div>
+              </div>
+
+              <span>
+                {{ event.availableSeats }} seats available
+              </span>
+            </div>
+
+            <p class="description">
+              {{ event.description }}
+            </p>
+
+            <div class="card-actions">
+              <button
+                class="details-button"
+                type="button"
+                (click)="openDetails(event)"
+              >
+                View Details
+              </button>
+
+              <button
+                class="register-button"
+                type="button"
+                [class.registered-button]="isRegistered(event.id)"
+                [class.full-button]="
+                  event.isFull && !isRegistered(event.id)
+                "
+                [disabled]="
+                  event.isFull ||
+                  isRegistered(event.id) ||
+                  registeringEventId === event.id
+                "
+                (click)="register(event)"
+              >
+                <ng-container
+                  *ngIf="
+                    registeringEventId === event.id;
+                    else buttonText
+                  "
+                >
+                  Registering...
+                </ng-container>
+
+                <ng-template #buttonText>
+                  <span *ngIf="isRegistered(event.id)">
+                    ✓ Registered
+                  </span>
+
+                  <span
+                    *ngIf="
+                      !isRegistered(event.id) &&
+                      event.isFull
+                    "
+                  >
+                    Event Full
+                  </span>
+
+                  <span
+                    *ngIf="
+                      !isRegistered(event.id) &&
+                      !event.isFull
+                    "
+                  >
+                    Register
+                  </span>
+                </ng-template>
+              </button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- Event details modal -->
+
+<div
+  *ngIf="selectedEvent as event"
+  class="modal-overlay"
+  (click)="closeDetails()"
+>
+  <section
+    class="event-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="event-modal-title"
+    (click)="$event.stopPropagation()"
+  >
+    <button
+      class="modal-close"
+      type="button"
+      aria-label="Close event details"
+      (click)="closeDetails()"
+    >
+      ×
+    </button>
+
+    <div class="modal-banner academic-image">
+      <span class="category-badge">
+        Campus Event
+      </span>
+
+      <span
+        *ngIf="isRegistered(event.id)"
+        class="registration-badge registered"
+      >
+        ✓ Registered
+      </span>
+
+      <span
+        *ngIf="!isRegistered(event.id) && event.isFull"
+        class="registration-badge full"
+      >
+        Full
+      </span>
+
+      <div class="modal-banner-icon">▣</div>
+    </div>
+
+    <div class="modal-content">
+      <h2 id="event-modal-title">
+        {{ event.title }}
+      </h2>
+
+      <div class="modal-information">
+        <div>
+          <span class="information-icon">▣</span>
+
+          <div>
+            <small>Date and time</small>
+
+            <strong>
+              {{ event.eventDate | date:'EEEE, MMMM d, y' }}
+            </strong>
+
+            <span>
+              {{ event.eventDate | date:'h:mm a' }}
+            </span>
+          </div>
+        </div>
+
+        <div>
+          <span class="information-icon">⌖</span>
+
+          <div>
+            <small>Venue</small>
+            <strong>{{ event.venue }}</strong>
+          </div>
+        </div>
+
+        <div>
+          <span class="information-icon">♙</span>
+
+          <div>
+            <small>Registration</small>
+
+            <strong>
+              {{ event.registeredCount }} of
+              {{ event.capacity }} registered
+            </strong>
+
+            <span>
+              {{ event.availableSeats }} seats available
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-capacity">
+        <div class="capacity-track">
+          <div
+            class="capacity-progress"
+            [style.width.%]="registrationPercentage(event)"
+          ></div>
+        </div>
+      </div>
+
+      <div class="about-event">
+        <h3>About this event</h3>
+        <p>{{ event.description }}</p>
+      </div>
+
+      <div class="modal-actions">
+        <button
+          class="modal-secondary-button"
+          type="button"
+          (click)="closeDetails()"
+        >
+          Close
+        </button>
+
+        <button
+          *ngIf="!isRegistered(event.id)"
+          class="modal-register-button"
+          type="button"
+          [disabled]="
+            event.isFull ||
+            registeringEventId === event.id
+          "
+          (click)="register(event)"
+        >
+          {{
+            registeringEventId === event.id
+              ? 'Registering...'
+              : event.isFull
+                ? 'Event Full'
+                : 'Register for Event'
+          }}
+        </button>
+
+        <button
+          *ngIf="isRegistered(event.id)"
+          class="cancel-registration-button"
+          type="button"
+          [disabled]="cancellingEventId === event.id"
+          (click)="cancelRegistration(event)"
+        >
+          {{
+            cancellingEventId === event.id
+              ? 'Cancelling...'
+              : 'Cancel Registration'
+          }}
+        </button>
+      </div>
+    </div>
+  </section>
+</div>
