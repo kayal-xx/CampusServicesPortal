@@ -1,1 +1,381 @@
-<p>student-list works!</p>
+<div class="portal-layout">
+  <app-navbar></app-navbar>
+
+  <main class="profile-page">
+    <header class="topbar">
+      <div>
+        <p class="breadcrumb">
+          Student Portal <span>/</span> My Profile
+        </p>
+        <h1>My Profile</h1>
+      </div>
+
+      <div class="topbar-actions">
+        <div class="search-box">
+          <span aria-hidden="true">⌕</span>
+          <input
+            type="search"
+            placeholder="Search campus services"
+            aria-label="Search campus services"
+          />
+        </div>
+
+        <button
+          class="notification-button"
+          type="button"
+          aria-label="Notifications"
+        >
+          ♢
+          <span></span>
+        </button>
+      </div>
+    </header>
+
+    <section class="content-area">
+      <div
+        class="message error-message"
+        role="alert"
+        *ngIf="errorMessage"
+      >
+        <strong>Unable to continue</strong>
+        <span>{{ errorMessage }}</span>
+
+        <button
+          type="button"
+          *ngIf="!student"
+          (click)="loadProfile()"
+        >
+          Try again
+        </button>
+      </div>
+
+      <div
+        class="message success-message"
+        role="status"
+        *ngIf="successMessage"
+      >
+        <strong>Success</strong>
+        <span>{{ successMessage }}</span>
+      </div>
+
+      <section
+        class="loading-card"
+        *ngIf="isLoading"
+      >
+        <span class="spinner"></span>
+        <p>Loading your profile...</p>
+      </section>
+
+      <ng-container *ngIf="!isLoading && student">
+        <section class="profile-hero">
+          <div class="profile-identity">
+            <div class="large-avatar">
+              {{ initials }}
+            </div>
+
+            <div>
+              <div class="name-row">
+                <h2>{{ student.fullName }}</h2>
+
+                <span
+                  class="status-badge"
+                  [class.inactive]="!student.isActive"
+                >
+                  {{ student.isActive ? 'Active' : 'Inactive' }}
+                </span>
+              </div>
+
+              <p>
+                {{ student.indexNumber }}
+                <span>·</span>
+                {{ student.faculty }}
+              </p>
+
+              <div class="identity-tags">
+                <span>{{ student.role }}</span>
+                <span>University Student</span>
+              </div>
+            </div>
+          </div>
+
+          <button
+            class="edit-button"
+            type="button"
+            *ngIf="!isEditing"
+            (click)="startEditing()"
+          >
+            <span aria-hidden="true">✎</span>
+            Edit Profile
+          </button>
+        </section>
+
+        <section
+          class="profile-grid"
+          *ngIf="!isEditing"
+        >
+          <article class="information-card">
+            <header>
+              <div class="card-icon blue">♙</div>
+
+              <div>
+                <h3>Personal Information</h3>
+                <p>Your personal and contact details</p>
+              </div>
+            </header>
+
+            <dl>
+              <div>
+                <dt>Full Name</dt>
+                <dd>{{ student.fullName }}</dd>
+              </div>
+
+              <div>
+                <dt>Contact Number</dt>
+                <dd>{{ student.contactNumber }}</dd>
+              </div>
+
+              <div>
+                <dt>Account Status</dt>
+                <dd>
+                  {{ student.isActive ? 'Active' : 'Inactive' }}
+                </dd>
+              </div>
+            </dl>
+          </article>
+
+          <article class="information-card">
+            <header>
+              <div class="card-icon green">▤</div>
+
+              <div>
+                <h3>Academic Information</h3>
+                <p>Your university information</p>
+              </div>
+            </header>
+
+            <dl>
+              <div>
+                <dt>Index Number</dt>
+                <dd>{{ student.indexNumber }}</dd>
+              </div>
+
+              <div>
+                <dt>Faculty</dt>
+                <dd>{{ student.faculty }}</dd>
+              </div>
+
+              <div>
+                <dt>Account Role</dt>
+                <dd>{{ student.role }}</dd>
+              </div>
+            </dl>
+          </article>
+
+          <article class="information-card">
+            <header>
+              <div class="card-icon purple">✉</div>
+
+              <div>
+                <h3>Contact Information</h3>
+                <p>Your registered communication details</p>
+              </div>
+            </header>
+
+            <dl>
+              <div>
+                <dt>Email Address</dt>
+                <dd>{{ student.email }}</dd>
+              </div>
+
+              <div>
+                <dt>Contact Number</dt>
+                <dd>{{ student.contactNumber }}</dd>
+              </div>
+
+              <div>
+                <dt>Member Since</dt>
+                <dd>
+                  {{ student.createdAt | date: 'MMMM yyyy' }}
+                </dd>
+              </div>
+            </dl>
+          </article>
+
+          <article class="account-card">
+            <div>
+              <span class="account-icon">✓</span>
+
+              <div>
+                <h3>Account verified</h3>
+                <p>
+                  Your student account is active and ready
+                  to access campus services.
+                </p>
+              </div>
+            </div>
+
+            <span class="verified-label">
+              Verified
+            </span>
+          </article>
+        </section>
+
+        <section
+          class="edit-card"
+          *ngIf="isEditing"
+        >
+          <header>
+            <div>
+              <p class="section-label">PROFILE SETTINGS</p>
+              <h2>Edit Profile</h2>
+              <p>
+                Update your personal and contact information.
+                Your index number cannot be changed.
+              </p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              (click)="cancelEditing()"
+              aria-label="Close edit form"
+            >
+              ×
+            </button>
+          </header>
+
+          <form
+            [formGroup]="profileForm"
+            (ngSubmit)="saveProfile()"
+            novalidate
+          >
+            <div class="form-grid">
+              <div class="form-field">
+                <label for="fullName">Full name</label>
+
+                <input
+                  id="fullName"
+                  type="text"
+                  formControlName="fullName"
+                />
+
+                <small
+                  *ngIf="
+                    profileForm.controls.fullName.invalid &&
+                    profileForm.controls.fullName.touched
+                  "
+                >
+                  Enter a valid full name.
+                </small>
+              </div>
+
+              <div class="form-field">
+                <label for="indexNumber">
+                  Index number
+                </label>
+
+                <input
+                  id="indexNumber"
+                  type="text"
+                  [value]="student.indexNumber"
+                  disabled
+                />
+
+                <span class="field-note">
+                  Index number cannot be changed.
+                </span>
+              </div>
+
+              <div class="form-field">
+                <label for="email">Email address</label>
+
+                <input
+                  id="email"
+                  type="email"
+                  formControlName="email"
+                />
+
+                <small
+                  *ngIf="
+                    profileForm.controls.email.invalid &&
+                    profileForm.controls.email.touched
+                  "
+                >
+                  Enter a valid email address.
+                </small>
+              </div>
+
+              <div class="form-field">
+                <label for="contactNumber">
+                  Contact number
+                </label>
+
+                <input
+                  id="contactNumber"
+                  type="tel"
+                  formControlName="contactNumber"
+                />
+
+                <small
+                  *ngIf="
+                    profileForm.controls.contactNumber.invalid &&
+                    profileForm.controls.contactNumber.touched
+                  "
+                >
+                  Enter a valid contact number.
+                </small>
+              </div>
+
+              <div class="form-field full-width">
+                <label for="faculty">Faculty</label>
+
+                <input
+                  id="faculty"
+                  type="text"
+                  formControlName="faculty"
+                />
+
+                <small
+                  *ngIf="
+                    profileForm.controls.faculty.invalid &&
+                    profileForm.controls.faculty.touched
+                  "
+                >
+                  Faculty is required.
+                </small>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button
+                class="cancel-button"
+                type="button"
+                (click)="cancelEditing()"
+                [disabled]="isSaving"
+              >
+                Cancel
+              </button>
+
+              <button
+                class="save-button"
+                type="submit"
+                [disabled]="isSaving"
+              >
+                <span
+                  class="button-spinner"
+                  *ngIf="isSaving"
+                ></span>
+
+                {{
+                  isSaving
+                    ? 'Saving changes...'
+                    : 'Save Changes'
+                }}
+              </button>
+            </div>
+          </form>
+        </section>
+      </ng-container>
+    </section>
+  </main>
+</div>

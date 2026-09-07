@@ -1,34 +1,46 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
-
-export interface StudentDto {
-  id: number;
-  fullName: string;
-  indexNumber: string;
-  email: string;
-  faculty: string;
-  contactNumber: string;
-  role: string;
-  isActive: boolean;
-  createdAt: string;
-}
+import {
+  StudentProfile,
+  UpdateStudentProfile
+} from '../models/student.model';
+import { Auth } from './auth';
 
 @Injectable({
   providedIn: 'root'
 })
-export class Student {
+export class StudentService {
+  private readonly http = inject(HttpClient);
+  private readonly authService = inject(Auth);
+  private readonly apiUrl = 'http://localhost:5266/api/students';
 
-  private readonly apiUrl = `${environment.apiUrl}/Students`;
+  getMyProfile(): Observable<StudentProfile> {
+    const studentId = this.getCurrentStudentId();
 
-  constructor(private http: HttpClient) {}
-
-  getAll(): Observable<StudentDto[]> {
-    return this.http.get<StudentDto[]>(this.apiUrl);
+    return this.http.get<StudentProfile>(
+      `${this.apiUrl}/${studentId}`
+    );
   }
 
-  getById(id: number): Observable<StudentDto> {
-    return this.http.get<StudentDto>(`${this.apiUrl}/${id}`);
+  updateMyProfile(
+    profile: UpdateStudentProfile
+  ): Observable<StudentProfile> {
+    const studentId = this.getCurrentStudentId();
+
+    return this.http.put<StudentProfile>(
+      `${this.apiUrl}/${studentId}`,
+      profile
+    );
+  }
+
+  private getCurrentStudentId(): number {
+    const currentUser = this.authService.getCurrentUser();
+
+    if (!currentUser?.studentId) {
+      throw new Error('Student information is unavailable.');
+    }
+
+    return currentUser.studentId;
   }
 }
