@@ -53,26 +53,29 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString);
 });
 
-// Member 1 — Authentication and Student dependencies
+// Member 1 — Authentication and Student
 builder.Services.AddScoped<StudentRepository>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<StudentService>();
 builder.Services.AddScoped<JwtTokenService>();
 
+// Member 1 — Hostel
+builder.Services.AddScoped<HostelRepository>();
+builder.Services.AddScoped<HostelService>();
 
-// Member 1 — Lab dependencies
+// Member 1 — Lab
 builder.Services.AddScoped<LabRepository>();
 builder.Services.AddScoped<LabService>();
 
-// Member 2 — Event dependencies
+// Member 2 — Event
 builder.Services.AddScoped<IEventRepository, EventRepository>();
 builder.Services.AddScoped<IEventService, EventService>();
 
-// Member 2 — Complaint dependencies
+// Member 2 — Complaint
 builder.Services.AddScoped<IComplaintRepository, ComplaintRepository>();
 builder.Services.AddScoped<IComplaintService, ComplaintService>();
 
-// Member 2 — Certificate dependencies
+// Member 2 — Certificate
 builder.Services.AddScoped<
     ICertificateRepository,
     CertificateRepository>();
@@ -80,6 +83,29 @@ builder.Services.AddScoped<
 builder.Services.AddScoped<
     ICertificateService,
     CertificateService>();
+
+// Member 3 — Fee
+builder.Services.AddScoped<
+    IFeeRepository,
+    FeeRepository>();
+
+builder.Services.AddScoped<
+    IFeeService,
+    FeeService>();
+
+// Member 3 — Notification
+builder.Services.AddScoped<
+    INotificationRepository,
+    NotificationRepository>();
+
+builder.Services.AddScoped<
+    INotificationService,
+    NotificationService>();
+
+// Member 3 — Dashboard
+builder.Services.AddScoped<
+    IDashboardService,
+    DashboardService>();
 
 // Angular CORS
 builder.Services.AddCors(options =>

@@ -1,3 +1,18 @@
 import { Routes } from '@angular/router';
+import { EventList } from './features/events/event-list/event-list';
 
-export const routes: Routes = [];
+export const routes: Routes = [
+  {
+    path: 'events',
+    component: EventList
+  },
+  {
+    path: '',
+    redirectTo: 'events',
+    pathMatch: 'full'
+  },
+  {
+    path: '**',
+    redirectTo: 'events'
+  }
+];
