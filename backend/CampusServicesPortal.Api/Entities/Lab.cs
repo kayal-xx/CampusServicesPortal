@@ -1,4 +1,4 @@
-// Lab.cs
+
 namespace CampusServicesPortal.Api.Entities;
 
 public class Lab
