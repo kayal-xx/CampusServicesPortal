@@ -3,6 +3,7 @@ import { authGuard } from './core/guards/auth.guard';
 import { Login } from './features/auth/login/login';
 import { Dashboard } from './features/dashboard/dashboard/dashboard';
 import { EventList } from './features/events/event-list/event-list';
+import { StudentList } from './features/students/student-list/student-list';
 
 export const routes: Routes = [
   {
@@ -15,6 +16,12 @@ export const routes: Routes = [
     component: Dashboard,
     canActivate: [authGuard],
     title: 'Dashboard | Campus Services Portal'
+  },
+  {
+    path: 'profile',
+    component: StudentList,
+    canActivate: [authGuard],
+    title: 'My Profile | Campus Services Portal'
   },
   {
     path: 'events',
