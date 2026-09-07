@@ -1,1 +1,71 @@
-<p>navbar works!</p>
+<button
+  class="mobile-menu-button"
+  type="button"
+  (click)="toggleMobileMenu()"
+  aria-label="Open navigation menu"
+>
+  ☰
+</button>
+
+<div
+  class="sidebar-backdrop"
+  [class.visible]="isMobileMenuOpen"
+  (click)="closeMobileMenu()"
+></div>
+
+<aside
+  class="sidebar"
+  [class.mobile-open]="isMobileMenuOpen"
+>
+  <div class="brand">
+    <div class="brand-logo">CSP</div>
+
+    <div class="brand-text">
+      <strong>Campus Services</strong>
+      <span>STUDENT PORTAL</span>
+    </div>
+  </div>
+
+  <nav aria-label="Main navigation">
+    <a
+      *ngFor="let item of navigationItems"
+      class="navigation-link"
+      [routerLink]="item.route"
+      routerLinkActive="active"
+      (click)="closeMobileMenu()"
+    >
+      <span class="navigation-icon" aria-hidden="true">
+        {{ item.icon }}
+      </span>
+
+      <span>{{ item.label }}</span>
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="student-summary">
+      <div class="student-avatar">
+        {{ initials }}
+      </div>
+
+      <div class="student-details">
+        <strong>
+          {{ currentUser?.fullName || 'Student' }}
+        </strong>
+
+        <span>
+          {{ currentUser?.email || 'University Student' }}
+        </span>
+      </div>
+    </div>
+
+    <button
+      class="logout-button"
+      type="button"
+      (click)="logout()"
+    >
+      <span aria-hidden="true">↪</span>
+      Logout
+    </button>
+  </div>
+</aside>
