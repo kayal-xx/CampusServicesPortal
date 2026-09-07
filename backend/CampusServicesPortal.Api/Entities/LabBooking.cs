@@ -1,4 +1,4 @@
-// LabBooking.cs
+
 namespace CampusServicesPortal.Api.Entities;
 
 public class LabBooking

@@ -8,6 +8,7 @@ using CampusServicesPortal.Api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +18,29 @@ builder.Services.AddControllers();
 // OpenAPI and Swagger
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition(
+        "bearer",
+        new OpenApiSecurityScheme
+        {
+            Type = SecuritySchemeType.Http,
+            Scheme = "bearer",
+            BearerFormat = "JWT",
+            Description = "Enter the JWT token."
+        });
+
+    options.AddSecurityRequirement(document =>
+        new OpenApiSecurityRequirement
+        {
+            [
+                new OpenApiSecuritySchemeReference(
+                    "bearer",
+                    document)
+            ] = []
+        });
+});
 
 // Database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -30,30 +53,33 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString);
 });
 
-// Member 1 dependencies
+// Member 1 — Authentication and Student dependencies
 builder.Services.AddScoped<StudentRepository>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<StudentService>();
 builder.Services.AddScoped<JwtTokenService>();
 
-// Member 2 Event dependencies
+
+// Member 1 — Lab dependencies
+builder.Services.AddScoped<LabRepository>();
+builder.Services.AddScoped<LabService>();
+
+// Member 2 — Event dependencies
 builder.Services.AddScoped<IEventRepository, EventRepository>();
 builder.Services.AddScoped<IEventService, EventService>();
 
-// Member 2 Complaint dependencies
+// Member 2 — Complaint dependencies
 builder.Services.AddScoped<IComplaintRepository, ComplaintRepository>();
 builder.Services.AddScoped<IComplaintService, ComplaintService>();
 
-// Member 2 Certificate dependencies
+// Member 2 — Certificate dependencies
 builder.Services.AddScoped<
     ICertificateRepository,
-    CertificateRepository
->();
+    CertificateRepository>();
 
 builder.Services.AddScoped<
     ICertificateService,
-    CertificateService
->();
+    CertificateService>();
 
 // Angular CORS
 builder.Services.AddCors(options =>
@@ -67,7 +93,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-// JWT Authentication
+// JWT authentication
 var jwtKey = builder.Configuration["Jwt:Key"]
     ?? throw new InvalidOperationException(
         "JWT key is not configured."
