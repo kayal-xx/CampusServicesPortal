@@ -1,20 +1,20 @@
-<div class="app-layout">
+<div class="admin-layout">
 
     <aside class="sidebar">
         <div class="brand">
             <h2>UNICOM</h2>
-            <p>Student Portal</p>
+            <p>Admin Portal</p>
         </div>
 
         <nav class="menu">
             <a href="#">Dashboard</a>
-            <a href="#">Profile</a>
+            <a href="#">Students</a>
             <a href="#">Hostel</a>
             <a href="#">Lab Reservations</a>
             <a href="#">Events</a>
             <a href="#">Complaints</a>
             <a href="#">Certificates</a>
-            <a href="#" class="active">Fees & Payments</a>
+            <a href="#" class="active">Fee Management</a>
             <a href="#">Notifications</a>
         </nav>
     </aside>
@@ -23,26 +23,13 @@
 
         <header class="topbar">
             <div>
-                <h1>Fees & Payments</h1>
-                <p *ngIf="student">
-                    {{ student.fullName }} · {{ student.indexNumber }}
-                </p>
-            </div>
-
-            <div class="profile" *ngIf="student">
-                <div class="avatar">
-                    {{ student.fullName.charAt(0) }}
-                </div>
-
-                <div>
-                    <strong>{{ student.fullName }}</strong>
-                    <span>{{ student.faculty }}</span>
-                </div>
+                <h1>Fee Management</h1>
+                <p>Administration</p>
             </div>
         </header>
 
         <div *ngIf="loading" class="message">
-            Loading fee details...
+            Loading fee records...
         </div>
 
         <div *ngIf="errorMessage" class="error-message">
@@ -53,44 +40,31 @@
 
             <div class="summary-grid">
 
-                <!-- Total Fees -->
                 <div class="summary-card">
-                    <div class="summary-icon blue-icon">
-                        Rs
-                    </div>
-
                     <div>
-                        <p>Total Fees</p>
-                        <h2>Rs. {{ TotalFees | number:'1.2-2' }}</h2>
-                        <span class="summary-note">All fee records</span>
+                        <p>Total Records</p>
+                        <h2>{{ totalRecords }}</h2>
                     </div>
                 </div>
 
-                <!-- Amount Paid -->
                 <div class="summary-card">
-                    <div class="summary-icon green-icon">
-                        ✓
-                    </div>
-
                     <div>
-                        <p>Amount Paid</p>
-                        <h2>Rs. {{ totalPaid | number:'1.2-2' }}</h2>
-                        <span class="summary-note">Successfully paid</span>
+                        <p>Paid</p>
+                        <h2>{{ paidCount }}</h2>
                     </div>
                 </div>
 
-                <!-- Outstanding -->
                 <div class="summary-card">
-                    <div class="summary-icon red-icon">
-                        !
+                    <div>
+                        <p>Unpaid</p>
+                        <h2>{{ unpaidCount }}</h2>
                     </div>
+                </div>
 
+                <div class="summary-card">
                     <div>
                         <p>Outstanding</p>
-                        <h2>Rs. {{ outstandingBalance | number:'1.2-2' }}</h2>
-                        <span class="summary-note">
-                            {{ outstandingBalance > 0 ? 'Payment required' : 'No pending payments' }}
-                        </span>
+                        <h2>Rs. {{ outstandingAmount | number:'1.2-2' }}</h2>
                     </div>
                 </div>
 
@@ -101,8 +75,20 @@
                 <div class="fee-card-header">
                     <div>
                         <h2>Fee Records</h2>
-                        <p>View your payment history and outstanding fees</p>
+                        <p>Manage student fee payments</p>
                     </div>
+                </div>
+                <div class="filter-bar">
+
+                    <input type="text" [(ngModel)]="searchText" placeholder="Search by Student ID or Fee Type"
+                        class="search-input" />
+
+                    <select [(ngModel)]="statusFilter" class="status-filter">
+                        <option value="All">All Status</option>
+                        <option value="Paid">Paid</option>
+                        <option value="Unpaid">Unpaid</option>
+                    </select>
+
                 </div>
 
                 <div class="table-wrapper">
@@ -110,6 +96,8 @@
                     <table>
                         <thead>
                             <tr>
+                                <th>ID</th>
+                                <th>Student ID</th>
                                 <th>Fee Type</th>
                                 <th>Amount</th>
                                 <th>Status</th>
@@ -120,13 +108,13 @@
 
                         <tbody>
 
-                            <tr *ngFor="let fee of fees">
+                            <tr *ngFor="let fee of filteredFees">
 
-                                <td>
-                                    <div class="fee-type">
-                                        {{ fee.feeType }}
-                                    </div>
-                                </td>
+                                <td>{{ fee.id }}</td>
+
+                                <td>{{ fee.studentId }}</td>
+
+                                <td>{{ fee.feeType }}</td>
 
                                 <td>
                                     Rs. {{ fee.amount | number:'1.2-2' }}
@@ -146,8 +134,8 @@
                                 </td>
 
                                 <td>
-                                    <button *ngIf="!fee.isPaid" class="pay-button" (click)="payNow(fee)">
-                                        Pay Now
+                                    <button *ngIf="!fee.isPaid" class="action-button" (click)="markAsPaid(fee)">
+                                        Mark as Paid
                                     </button>
 
                                     <span *ngIf="fee.isPaid" class="completed">
@@ -158,7 +146,7 @@
                             </tr>
 
                             <tr *ngIf="fees.length === 0">
-                                <td colspan="5" class="empty-state">
+                                <td colspan="7" class="empty-state">
                                     No fee records found.
                                 </td>
                             </tr>
@@ -166,25 +154,6 @@
                         </tbody>
                     </table>
 
-                </div>
-
-            </div>
-            <div class="payment-info">
-                <div class="info-icon">
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="16" x2="12" y2="12"></line>
-                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                    </svg>
-                </div>
-
-                <div>
-                    <h3>Payment Instructions</h3>
-                    <p>
-                        For outstanding fees, please contact the university finance office
-                        or use the available payment option.
-                    </p>
                 </div>
             </div>
 

@@ -1,1 +1,95 @@
-<p>notification-list works!</p>
+<div class="notification-layout">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <h2>UNICOM</h2>
+      <p>Student Portal</p>
+    </div>
+
+    <nav class="menu">
+      <a href="#">Dashboard</a>
+      <a href="#">Profile</a>
+      <a href="#">Hostel</a>
+      <a href="#">Lab Reservations</a>
+      <a href="#">Events</a>
+      <a href="#">Complaints</a>
+      <a href="#">Certificates</a>
+      <a href="#">Fees & Payments</a>
+      <a href="#" class="active">Notifications</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+
+    <header class="topbar">
+      <div>
+        <h1>Notifications</h1>
+        <p>View your latest university updates</p>
+      </div>
+
+      <div class="unread-badge">
+        {{ unreadCount }} Unread
+      </div>
+    </header>
+
+    <div *ngIf="loading" class="message">
+      Loading notifications...
+    </div>
+
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+
+    <section *ngIf="!loading">
+
+      <div class="notification-card">
+
+        <div
+          *ngFor="let item of notifications"
+          class="notification-item"
+          [class.unread]="!item.isRead"
+        >
+
+          <div class="notification-icon">
+            !
+          </div>
+
+          <div class="notification-content">
+            <p>{{ item.message }}</p>
+
+            <span>
+              {{ item.createdAt | date:'MMM d, y, h:mm a' }}
+            </span>
+          </div>
+
+          <button
+            *ngIf="!item.isRead"
+            class="read-button"
+            (click)="markAsRead(item)"
+          >
+            Mark as Read
+          </button>
+
+          <span
+            *ngIf="item.isRead"
+            class="read-status"
+          >
+            Read
+          </span>
+
+        </div>
+
+        <div
+          *ngIf="notifications.length === 0"
+          class="empty-state"
+        >
+          No notifications found.
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
