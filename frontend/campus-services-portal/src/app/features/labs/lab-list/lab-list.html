@@ -1,1 +1,267 @@
-<p>lab-list works!</p>
+<div class="portal-layout">
+  <app-navbar></app-navbar>
+
+  <main class="page-content">
+    <header class="page-header">
+      <div>
+        <p class="breadcrumb">
+          Student Portal / Lab Reservations
+        </p>
+        <h1>Lab Reservations</h1>
+      </div>
+
+      <div class="header-icon">⌘</div>
+    </header>
+
+    <section class="hero">
+      <div>
+        <span class="hero-label">CAMPUS LABS</span>
+        <h2>Reserve your lab session</h2>
+        <p>
+          View available laboratories, reserve a time slot
+          and manage your bookings.
+        </p>
+      </div>
+
+      <div class="hero-symbol">⌘</div>
+    </section>
+
+    <nav class="tabs">
+      <button
+        type="button"
+        [class.active]="activeTab === 'labs'"
+        (click)="showLabs()">
+        Available Labs
+      </button>
+
+      <button
+        type="button"
+        [class.active]="activeTab === 'book'"
+        (click)="openBooking()">
+        Book a Lab
+      </button>
+
+      <button
+        type="button"
+        [class.active]="activeTab === 'bookings'"
+        (click)="showBookings()">
+        My Reservations
+      </button>
+    </nav>
+
+    <div
+      *ngIf="errorMessage"
+      class="message error-message">
+      <strong>Unable to continue</strong>
+      <span>{{ errorMessage }}</span>
+    </div>
+
+    <div
+      *ngIf="successMessage"
+      class="message success-message">
+      <strong>Success</strong>
+      <span>{{ successMessage }}</span>
+    </div>
+
+    <section
+      *ngIf="isLoading"
+      class="state-card">
+      <div class="spinner"></div>
+      <p>Loading laboratory information...</p>
+    </section>
+
+    <section
+      *ngIf="!isLoading && activeTab === 'labs'">
+      <div class="section-heading">
+        <div>
+          <h2>Available Laboratories</h2>
+          <p>Select a laboratory to reserve your time slot.</p>
+        </div>
+
+        <strong>{{ labs.length }} labs</strong>
+      </div>
+
+      <div
+        *ngIf="labs.length > 0"
+        class="lab-grid">
+        <article
+          *ngFor="let lab of labs"
+          class="lab-card">
+          <div class="lab-card-icon">⌘</div>
+
+          <div class="lab-card-body">
+            <div class="card-title">
+              <h3>{{ lab.name }}</h3>
+              <span class="available-badge">Available</span>
+            </div>
+
+            <p class="location">⌖ {{ lab.location }}</p>
+
+            <div class="capacity">
+              <span>Capacity</span>
+              <strong>{{ lab.capacity }} students</strong>
+            </div>
+
+            <button
+              type="button"
+              class="primary-button"
+              (click)="openBooking(lab.id)">
+              Reserve This Lab
+            </button>
+          </div>
+        </article>
+      </div>
+
+      <div
+        *ngIf="labs.length === 0"
+        class="state-card">
+        <div class="empty-icon">⌘</div>
+        <h3>No laboratories available</h3>
+        <p>
+          There are currently no active laboratories.
+          Please check again later.
+        </p>
+      </div>
+    </section>
+
+    <section
+      *ngIf="!isLoading && activeTab === 'book'"
+      class="booking-panel">
+      <div class="panel-heading">
+        <h2>Book a Laboratory</h2>
+        <p>Choose a lab, date and available time period.</p>
+      </div>
+
+      <form
+        class="booking-form"
+        (ngSubmit)="submitBooking()">
+        <label>
+          Laboratory
+          <select
+            name="labId"
+            [(ngModel)]="selectedLabId"
+            required>
+            <option [ngValue]="null">
+              Select a laboratory
+            </option>
+
+            <option
+              *ngFor="let lab of labs"
+              [ngValue]="lab.id">
+              {{ lab.name }} — {{ lab.location }}
+            </option>
+          </select>
+        </label>
+
+        <label>
+          Booking date
+          <input
+            type="date"
+            name="bookingDate"
+            [(ngModel)]="bookingDate"
+            [min]="minimumDate"
+            required>
+        </label>
+
+        <div class="time-row">
+          <label>
+            Start time
+            <input
+              type="time"
+              name="startTime"
+              [(ngModel)]="startTime"
+              required>
+          </label>
+
+          <label>
+            End time
+            <input
+              type="time"
+              name="endTime"
+              [(ngModel)]="endTime"
+              required>
+          </label>
+        </div>
+
+        <div
+          *ngIf="getSelectedLab() as selectedLab"
+          class="selected-lab">
+          <strong>{{ selectedLab.name }}</strong>
+          <span>{{ selectedLab.location }}</span>
+          <span>Capacity: {{ selectedLab.capacity }}</span>
+        </div>
+
+        <button
+          type="submit"
+          class="primary-button submit-button"
+          [disabled]="isSubmitting">
+          {{
+            isSubmitting
+              ? 'Creating reservation...'
+              : 'Confirm Reservation'
+          }}
+        </button>
+      </form>
+    </section>
+
+    <section
+      *ngIf="!isLoading && activeTab === 'bookings'">
+      <div class="section-heading">
+        <div>
+          <h2>My Reservations</h2>
+          <p>View and manage your laboratory bookings.</p>
+        </div>
+
+        <strong>{{ bookings.length }} reservations</strong>
+      </div>
+
+      <div
+        *ngIf="bookings.length > 0"
+        class="booking-list">
+        <article
+          *ngFor="let booking of bookings"
+          class="booking-card">
+          <div class="booking-details">
+            <div class="card-title">
+              <h3>{{ booking.labName }}</h3>
+
+              <span
+                class="status-badge"
+                [class.cancelled]="booking.status === 'Cancelled'">
+                {{ booking.status }}
+              </span>
+            </div>
+
+            <p>📅 {{ booking.bookingDate | date: 'mediumDate' }}</p>
+            <p>
+              ◷ {{ booking.startTime }} — {{ booking.endTime }}
+            </p>
+          </div>
+
+          <button
+            *ngIf="booking.status !== 'Cancelled'"
+            type="button"
+            class="danger-button"
+            (click)="cancelBooking(booking)">
+            Cancel Reservation
+          </button>
+        </article>
+      </div>
+
+      <div
+        *ngIf="bookings.length === 0"
+        class="state-card">
+        <div class="empty-icon">⌘</div>
+        <h3>No reservations yet</h3>
+        <p>Your laboratory reservations will appear here.</p>
+
+        <button
+          type="button"
+          class="primary-button small-button"
+          (click)="openBooking()">
+          Book a Laboratory
+        </button>
+      </div>
+    </section>
+  </main>
+</div>
