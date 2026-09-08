@@ -69,7 +69,7 @@ export class Login {
 
     this.authService.login({
       email: formValue.email.trim(),
-      password: formValue.password.trim().trim()
+      password: formValue.password.trim()
     }).subscribe({
       next: () => {
         this.isSubmitting = false;

@@ -3,15 +3,15 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 
 import { Login } from './features/auth/login/login';
-import { Dashboard } from './features/dashboard/dashboard/dashboard';
-import { StudentList } from './features/students/student-list/student-list';
-import { EventList } from './features/events/event-list/event-list';
-import { ComplaintList } from './features/complaints/complaint-list/complaint-list';
 import { CertificateList } from './features/certificates/certificate-list/certificate-list';
-
+import { ComplaintList } from './features/complaints/complaint-list/complaint-list';
+import { Dashboard } from './features/dashboard/dashboard/dashboard';
+import { EventList } from './features/events/event-list/event-list';
 import { FeeList } from './features/fees/fee-list/fee-list';
 import { FeeManagement } from './features/fees/fee-management/fee-management';
+import { HostelList } from './features/hostel/hostel-list/hostel-list';
 import { NotificationList } from './features/notifications/notification-list/notification-list';
+import { StudentList } from './features/students/student-list/student-list';
 
 export const routes: Routes = [
   {
@@ -30,6 +30,12 @@ export const routes: Routes = [
     component: StudentList,
     canActivate: [authGuard],
     title: 'My Profile | Campus Services Portal'
+  },
+  {
+    path: 'hostels',
+    component: HostelList,
+    canActivate: [authGuard],
+    title: 'Hostel Accommodation | Campus Services Portal'
   },
   {
     path: 'events',
