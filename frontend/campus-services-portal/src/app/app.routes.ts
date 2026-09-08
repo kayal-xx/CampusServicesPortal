@@ -5,7 +5,7 @@ import { ComplaintList } from './features/complaints/complaint-list/complaint-li
 import { Dashboard } from './features/dashboard/dashboard/dashboard';
 import { EventList } from './features/events/event-list/event-list';
 import { StudentList } from './features/students/student-list/student-list';
-
+import { HostelList } from './features/hostel/hostel-list/hostel-list';
 export const routes: Routes = [
   {
     path: 'login',
@@ -23,6 +23,12 @@ export const routes: Routes = [
     component: StudentList,
     canActivate: [authGuard],
     title: 'My Profile | Campus Services Portal'
+  },
+  {
+    path: 'hostels',
+    component: HostelList,
+    canActivate: [authGuard],
+    title: 'Hostel Accommodation | Campus Services Portal'
   },
   {
     path: 'events',

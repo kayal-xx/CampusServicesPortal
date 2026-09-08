@@ -1,1 +1,499 @@
-<p>hostel-list works!</p>
+<div class="portal-layout">
+  <app-navbar></app-navbar>
+
+  <main class="hostel-page">
+    <header class="topbar">
+      <div>
+        <p class="breadcrumb">
+          Student Portal <span>/</span> Hostel Accommodation
+        </p>
+        <h1>Hostel Accommodation</h1>
+      </div>
+
+      <div class="topbar-actions">
+        <div class="search-box">
+          <span aria-hidden="true">⌕</span>
+
+          <input
+            type="search"
+            placeholder="Search campus services"
+            aria-label="Search campus services"
+          />
+        </div>
+
+        <button
+          class="notification-button"
+          type="button"
+          aria-label="Notifications"
+        >
+          ♢
+          <span></span>
+        </button>
+      </div>
+    </header>
+
+    <section class="content-area">
+      <section class="page-introduction">
+        <div>
+          <p class="section-label">STUDENT ACCOMMODATION</p>
+          <h2>Find your home on campus</h2>
+          <p>
+            Explore available hostels, submit an application
+            and track its progress from one place.
+          </p>
+        </div>
+
+        <div class="introduction-icon" aria-hidden="true">
+          ▦
+        </div>
+      </section>
+
+      <nav
+        class="tabs"
+        aria-label="Hostel sections"
+      >
+        <button
+          type="button"
+          [class.active]="activeTab === 'hostels'"
+          (click)="setActiveTab('hostels')"
+        >
+          Available Hostels
+        </button>
+
+        <button
+          type="button"
+          [class.active]="activeTab === 'apply'"
+          (click)="setActiveTab('apply')"
+        >
+          Apply for Hostel
+        </button>
+
+        <button
+          type="button"
+          [class.active]="activeTab === 'applications'"
+          (click)="setActiveTab('applications')"
+        >
+          My Applications
+
+          <span
+            class="count-badge"
+            *ngIf="applications.length"
+          >
+            {{ applications.length }}
+          </span>
+        </button>
+      </nav>
+
+      <div
+        class="message error-message"
+        role="alert"
+        *ngIf="errorMessage"
+      >
+        <strong>Unable to continue</strong>
+        <span>{{ errorMessage }}</span>
+      </div>
+
+      <div
+        class="message success-message"
+        role="status"
+        *ngIf="successMessage"
+      >
+        <strong>Success</strong>
+        <span>{{ successMessage }}</span>
+      </div>
+
+      <section *ngIf="activeTab === 'hostels'">
+        <div class="section-heading">
+          <div>
+            <h2>Available Hostels</h2>
+            <p>
+              Select a hostel to begin your application.
+            </p>
+          </div>
+
+          <span>{{ hostels.length }} hostels</span>
+        </div>
+
+        <div
+          class="loading-card"
+          *ngIf="isLoadingHostels"
+        >
+          <span class="spinner"></span>
+          <p>Loading available hostels...</p>
+        </div>
+
+        <div
+          class="empty-card"
+          *ngIf="
+            !isLoadingHostels &&
+            hostels.length === 0
+          "
+        >
+          <div aria-hidden="true">▦</div>
+          <h3>No hostels available</h3>
+          <p>
+            There are currently no active hostels.
+            Please check again later.
+          </p>
+        </div>
+
+        <div
+          class="hostel-grid"
+          *ngIf="
+            !isLoadingHostels &&
+            hostels.length > 0
+          "
+        >
+          <article
+            class="hostel-card"
+            *ngFor="let hostel of hostels; let index = index"
+          >
+            <div
+              class="hostel-visual"
+              [class.alternate]="index % 2 !== 0"
+            >
+              <div class="building-icon" aria-hidden="true">
+                ▦
+              </div>
+
+              <span class="availability-badge">
+                Available
+              </span>
+            </div>
+
+            <div class="hostel-details">
+              <div>
+                <p class="hostel-label">
+                  UNIVERSITY ACCOMMODATION
+                </p>
+
+                <h3>{{ hostel.name }}</h3>
+
+                <p class="location">
+                  <span aria-hidden="true">⌖</span>
+                  {{ hostel.location }}
+                </p>
+              </div>
+
+              <div class="facility-list">
+                <span>Wi-Fi</span>
+                <span>Study Area</span>
+                <span>Campus Security</span>
+              </div>
+
+              <div class="hostel-actions">
+                <span class="active-label">
+                  <i></i>
+                  Active
+                </span>
+
+                <button
+                  type="button"
+                  (click)="selectHostel(hostel)"
+                >
+                  Apply Now
+                  <span aria-hidden="true">→</span>
+                </button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section
+        class="application-section"
+        *ngIf="activeTab === 'apply'"
+      >
+        <div class="application-information">
+          <p class="section-label">NEW APPLICATION</p>
+          <h2>Apply for campus accommodation</h2>
+
+          <p>
+            Complete this form using accurate information.
+            The administration will review your application
+            and update its status.
+          </p>
+
+          <div class="application-steps">
+            <article>
+              <span>1</span>
+
+              <div>
+                <h3>Select a hostel</h3>
+                <p>Choose an available campus hostel.</p>
+              </div>
+            </article>
+
+            <article>
+              <span>2</span>
+
+              <div>
+                <h3>Enter semester details</h3>
+                <p>Provide your requested academic semester.</p>
+              </div>
+            </article>
+
+            <article>
+              <span>3</span>
+
+              <div>
+                <h3>Track your application</h3>
+                <p>Follow approval and room assignment status.</p>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <form
+          class="application-form"
+          [formGroup]="applicationForm"
+          (ngSubmit)="submitApplication()"
+          novalidate
+        >
+          <header>
+            <h2>Hostel Application</h2>
+            <p>All fields marked with * are required.</p>
+          </header>
+
+          <div class="form-field">
+            <label for="hostelId">
+              Select hostel *
+            </label>
+
+            <select
+              id="hostelId"
+              formControlName="hostelId"
+            >
+              <option [ngValue]="0">
+                Select an available hostel
+              </option>
+
+              <option
+                *ngFor="let hostel of hostels"
+                [ngValue]="hostel.id"
+              >
+                {{ hostel.name }} — {{ hostel.location }}
+              </option>
+            </select>
+
+            <small
+              *ngIf="
+                applicationForm.controls.hostelId.invalid &&
+                applicationForm.controls.hostelId.touched
+              "
+            >
+              Select a hostel.
+            </small>
+          </div>
+
+          <div
+            class="selected-hostel"
+            *ngIf="applicationForm.controls.hostelId.value > 0"
+          >
+            <span aria-hidden="true">▦</span>
+
+            <div>
+              <small>SELECTED HOSTEL</small>
+              <strong>{{ getSelectedHostelName() }}</strong>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="semester">
+              Required semester *
+            </label>
+
+            <input
+              id="semester"
+              type="text"
+              formControlName="semester"
+              placeholder="Example: Semester 1 - 2026/2027"
+            />
+
+            <small
+              *ngIf="
+                applicationForm.controls.semester.invalid &&
+                applicationForm.controls.semester.touched
+              "
+            >
+              Enter the required semester.
+            </small>
+          </div>
+
+          <div class="form-field">
+            <label for="specialRequirements">
+              Special requirements
+            </label>
+
+            <textarea
+              id="specialRequirements"
+              rows="5"
+              maxlength="500"
+              formControlName="specialRequirements"
+              placeholder="Describe any accessibility, medical or other accommodation requirements."
+            ></textarea>
+
+            <div class="field-meta">
+              <span>Optional</span>
+
+              <span>
+                {{
+                  applicationForm.controls
+                    .specialRequirements.value.length
+                }}/500
+              </span>
+            </div>
+          </div>
+
+          <div class="form-note">
+            <span aria-hidden="true">i</span>
+
+            <p>
+              Submitting this form does not guarantee a room.
+              You will be notified after administrative review.
+            </p>
+          </div>
+
+          <button
+            class="submit-button"
+            type="submit"
+            [disabled]="isSubmitting"
+          >
+            <span
+              class="button-spinner"
+              *ngIf="isSubmitting"
+            ></span>
+
+            {{
+              isSubmitting
+                ? 'Submitting application...'
+                : 'Submit Application'
+            }}
+          </button>
+        </form>
+      </section>
+
+      <section *ngIf="activeTab === 'applications'">
+        <div class="section-heading">
+          <div>
+            <h2>My Applications</h2>
+            <p>
+              Review your hostel application history
+              and current status.
+            </p>
+          </div>
+
+          <button
+            class="refresh-button"
+            type="button"
+            (click)="loadApplications()"
+          >
+            ↻ Refresh
+          </button>
+        </div>
+
+        <div
+          class="loading-card"
+          *ngIf="isLoadingApplications"
+        >
+          <span class="spinner"></span>
+          <p>Loading your applications...</p>
+        </div>
+
+        <div
+          class="empty-card"
+          *ngIf="
+            !isLoadingApplications &&
+            applications.length === 0
+          "
+        >
+          <div aria-hidden="true">▤</div>
+          <h3>No applications yet</h3>
+          <p>
+            Select an available hostel and submit
+            your first application.
+          </p>
+
+          <button
+            type="button"
+            (click)="setActiveTab('hostels')"
+          >
+            Browse Hostels
+          </button>
+        </div>
+
+        <div
+          class="application-list"
+          *ngIf="
+            !isLoadingApplications &&
+            applications.length > 0
+          "
+        >
+          <article
+            class="application-card"
+            *ngFor="let application of applications"
+          >
+            <div class="application-main">
+              <div class="application-icon" aria-hidden="true">
+                ▦
+              </div>
+
+              <div>
+                <div class="application-title">
+                  <h3>{{ application.hostelName }}</h3>
+
+                  <span
+                    class="status"
+                    [ngClass]="
+                      getStatusClass(application.status)
+                    "
+                  >
+                    {{ application.status }}
+                  </span>
+                </div>
+
+                <p>
+                  Application #{{ application.id }}
+                  <span>·</span>
+                  {{ application.semester }}
+                </p>
+              </div>
+            </div>
+
+            <dl class="application-details">
+              <div>
+                <dt>Applied on</dt>
+                <dd>
+                  {{
+                    application.createdAt
+                      | date: 'dd MMM yyyy'
+                  }}
+                </dd>
+              </div>
+
+              <div>
+                <dt>Room assignment</dt>
+                <dd>
+                  {{
+                    application.roomNumber ||
+                    'Not assigned yet'
+                  }}
+                </dd>
+              </div>
+
+              <div>
+                <dt>Special requirements</dt>
+                <dd>
+                  {{
+                    application.specialRequirements ||
+                    'None provided'
+                  }}
+                </dd>
+              </div>
+            </dl>
+          </article>
+        </div>
+      </section>
+    </section>
+  </main>
+</div>
