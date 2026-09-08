@@ -1,1 +1,170 @@
-<p>dashboard works!</p>
+<div class="dashboard-page">
+
+  <div class="page-header">
+    <div>
+      <h1>Dashboard</h1>
+      <p>Campus Services Portal overview</p>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="state-box">
+      <p>Loading dashboard...</p>
+    </div>
+  }
+
+  @if (errorMessage) {
+    <div class="error-box">
+      {{ errorMessage }}
+    </div>
+  }
+
+  @if (!loading && summary) {
+
+    <div class="stats-grid">
+
+      <div class="stat-card">
+        <div class="icon blue">ST</div>
+        <div>
+          <p>Total Students</p>
+          <h2>{{ summary.totalStudents }}</h2>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="icon purple">H</div>
+        <div>
+          <p>Hostel Applications</p>
+          <h2>{{ summary.totalHostelApplications }}</h2>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="icon cyan">L</div>
+        <div>
+          <p>Lab Bookings</p>
+          <h2>{{ summary.totalLabBookings }}</h2>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="icon orange">E</div>
+        <div>
+          <p>Event Registrations</p>
+          <h2>{{ summary.totalEventRegistrations }}</h2>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="section-title">
+      <h2>Service Overview</h2>
+      <p>Current campus service statistics</p>
+    </div>
+
+    <div class="overview-grid">
+
+      <div class="overview-card">
+        <div class="overview-header">
+          <div>
+            <span class="small-label">COMPLAINTS</span>
+            <h3>Complaint Management</h3>
+          </div>
+
+          <div class="overview-icon red">
+            C
+          </div>
+        </div>
+
+        <div class="overview-numbers">
+          <div>
+            <span>Total</span>
+            <strong>{{ summary.totalComplaints }}</strong>
+          </div>
+
+          <div>
+            <span>Pending</span>
+            <strong class="warning-text">
+              {{ summary.pendingComplaints }}
+            </strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="overview-card">
+        <div class="overview-header">
+          <div>
+            <span class="small-label">CERTIFICATES</span>
+            <h3>Certificate Requests</h3>
+          </div>
+
+          <div class="overview-icon green">
+            CR
+          </div>
+        </div>
+
+        <div class="overview-numbers">
+          <div>
+            <span>Total</span>
+            <strong>{{ summary.totalCertificateRequests }}</strong>
+          </div>
+
+          <div>
+            <span>Pending</span>
+            <strong class="warning-text">
+              {{ summary.pendingCertificateRequests }}
+            </strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="overview-card">
+        <div class="overview-header">
+          <div>
+            <span class="small-label">PAYMENTS</span>
+            <h3>Fee Payments</h3>
+          </div>
+
+          <div class="overview-icon blue">
+            Rs
+          </div>
+        </div>
+
+        <div class="overview-numbers">
+          <div>
+            <span>Total</span>
+            <strong>{{ summary.totalFeePayments }}</strong>
+          </div>
+
+          <div>
+            <span>Paid</span>
+            <strong class="success-text">
+              {{ summary.paidFeePayments }}
+            </strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="overview-card">
+        <div class="overview-header">
+          <div>
+            <span class="small-label">NOTIFICATIONS</span>
+            <h3>Notifications</h3>
+          </div>
+
+          <div class="overview-icon purple">
+            N
+          </div>
+        </div>
+
+        <div class="notification-count">
+          <strong>{{ summary.unreadNotifications }}</strong>
+          <span>Unread Notifications</span>
+        </div>
+      </div>
+
+    </div>
+
+  }
+
+</div>
