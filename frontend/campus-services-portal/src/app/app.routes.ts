@@ -10,6 +10,7 @@ import { EventList } from './features/events/event-list/event-list';
 import { FeeList } from './features/fees/fee-list/fee-list';
 import { FeeManagement } from './features/fees/fee-management/fee-management';
 import { HostelList } from './features/hostel/hostel-list/hostel-list';
+import { LabList } from './features/labs/lab-list/lab-list';
 import { NotificationList } from './features/notifications/notification-list/notification-list';
 import { StudentList } from './features/students/student-list/student-list';
 
@@ -36,6 +37,12 @@ export const routes: Routes = [
     component: HostelList,
     canActivate: [authGuard],
     title: 'Hostel Accommodation | Campus Services Portal'
+  },
+  {
+    path: 'labs',
+    component: LabList,
+    canActivate: [authGuard],
+    title: 'Lab Reservations | Campus Services Portal'
   },
   {
     path: 'events',
