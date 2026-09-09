@@ -23,3 +23,31 @@ select,
 textarea {
   font: inherit;
 }
+/* Shared portal layout alignment */
+.portal-layout,
+.app-layout,
+.notification-layout,
+.admin-layout {
+  display: block !important;
+  min-height: 100vh;
+}
+
+.portal-layout > .main-content,
+.app-layout > .main-content,
+.notification-layout > .main-content,
+.admin-layout > .main-content {
+  width: calc(100% - 264px) !important;
+  min-height: 100vh;
+  margin-left: 250px !important;
+}
+
+@media (max-width: 900px) {
+  .portal-layout > .main-content,
+  .app-layout > .main-content,
+  .notification-layout > .main-content,
+  .admin-layout > .main-content {
+    width: 100% !important;
+    margin-left: 0 !important;
+    padding-top: 64px;
+  }
+}

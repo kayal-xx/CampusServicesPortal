@@ -11,15 +11,17 @@ import {
   EventRegistration
 } from '../../../core/models/event.model';
 import { EventService } from '../../../core/services/event.service';
-
+import { Navbar } from '../../../shared/navbar/navbar';
+import { Auth } from '../../../core/services/auth';
 type EventFilter = 'all' | 'upcoming' | 'past';
 
 @Component({
   selector: 'app-event-list',
-  imports: [
-    CommonModule,
-    FormsModule
-  ],
+ imports: [
+  CommonModule,
+  FormsModule,
+  Navbar
+],
   templateUrl: './event-list.html',
   styleUrl: './event-list.css'
 })
@@ -40,17 +42,27 @@ export class EventList implements OnInit {
   successMessage = '';
 
   // Replace this value with the authenticated student's ID later.
-  readonly studentId = 1;
+  studentId = 0;
 
-  constructor(
-    private eventService: EventService,
-    private cdr: ChangeDetectorRef
-  ) {}
+ constructor(
+  private eventService: EventService,
+  private cdr: ChangeDetectorRef,
+  private authService: Auth
+) {}
 
   ngOnInit(): void {
-    this.loadEvents();
-    this.loadStudentRegistrations();
+  const currentUser = this.authService.getCurrentUser();
+
+  if (!currentUser) {
+    this.errorMessage = 'Please sign in again.';
+    return;
   }
+
+  this.studentId = currentUser.studentId;
+
+  this.loadEvents();
+  this.loadStudentRegistrations();
+}
 
   get filteredEvents(): EventItem[] {
     const search = this.searchText.trim().toLowerCase();

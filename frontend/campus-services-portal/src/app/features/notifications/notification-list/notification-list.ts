@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Notification, NotificationItem } from '../../../core/services/notification';
-
+import { Auth } from '../../../core/services/auth';
+import { Navbar } from '../../../shared/navbar/navbar';
 @Component({
-  imports: [CommonModule],
+  imports: [CommonModule, Navbar],
   selector: 'app-notification-list',
   styleUrl: './notification-list.css',
   templateUrl: './notification-list.html',
@@ -16,16 +17,24 @@ export class NotificationList implements OnInit {
   loading = true;
   errorMessage = '';
 
-  constructor(
-    private notificationService: Notification,
-    private changeDetectorRef: ChangeDetectorRef
-  ) { }
+ constructor(
+  private notificationService: Notification,
+  private changeDetectorRef: ChangeDetectorRef,
+  private authService: Auth
+) {}
 
 
-  ngOnInit(): void {
-    const studentId = 1; // Replace with the actual student ID
-    this.loadNotifications(studentId);
+ ngOnInit(): void {
+  const currentUser = this.authService.getCurrentUser();
+
+  if (!currentUser) {
+    this.errorMessage = 'Please sign in again.';
+    this.loading = false;
+    return;
   }
+
+  this.loadNotifications(currentUser.studentId);
+}
 
   loadNotifications(studentId: number): void {
     this.notificationService.getByStudentId(studentId).subscribe({
