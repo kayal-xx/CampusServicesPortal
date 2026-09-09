@@ -4,11 +4,11 @@ import {
   DashboardService,
   DashboardSummary
 } from '../../../core/services/dashboard';
-
+import { Navbar } from '../../../shared/navbar/navbar';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, Navbar],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })

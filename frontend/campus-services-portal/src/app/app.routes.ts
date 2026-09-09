@@ -13,7 +13,7 @@ import { HostelList } from './features/hostel/hostel-list/hostel-list';
 import { LabList } from './features/labs/lab-list/lab-list';
 import { NotificationList } from './features/notifications/notification-list/notification-list';
 import { StudentList } from './features/students/student-list/student-list';
-
+import { adminGuard } from './core/guards/admin.guard';
 export const routes: Routes = [
   {
     path: 'login',
@@ -23,7 +23,7 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: Dashboard,
-    canActivate: [authGuard],
+    canActivate: [ adminGuard],
     title: 'Dashboard | Campus Services Portal'
   },
   {
@@ -71,7 +71,7 @@ export const routes: Routes = [
   {
     path: 'admin/fees',
     component: FeeManagement,
-    canActivate: [authGuard],
+    canActivate: [authGuard, adminGuard],
     title: 'Fee Management | Campus Services Portal'
   },
   {

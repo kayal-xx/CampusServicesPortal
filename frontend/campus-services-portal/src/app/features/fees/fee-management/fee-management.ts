@@ -2,11 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Fee, FeePayment } from '../../../core/services/fee';
-
+import { Navbar } from '../../../shared/navbar/navbar';
 @Component({
   selector: 'app-fee-management',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, Navbar],
   templateUrl: './fee-management.html',
   styleUrl: './fee-management.css'
 })

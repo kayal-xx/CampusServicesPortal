@@ -27,57 +27,79 @@ export class Navbar {
   private readonly authService = inject(Auth);
   private readonly router = inject(Router);
 
-  isMobileMenuOpen = false;
+isMobileMenuOpen = false;
 
-  readonly currentUser = this.authService.getCurrentUser();
+readonly currentUser = this.authService.getCurrentUser();
 
-  readonly navigationItems: NavigationItem[] = [
-    {
-      label: 'Dashboard',
-      icon: '⌂',
-      route: '/dashboard'
-    },
-    {
-      label: 'My Profile',
-      icon: '♙',
-      route: '/profile'
-    },
-    {
-      label: 'Hostel',
-      icon: '▦',
-      route: '/hostels'
-    },
-    {
-      label: 'Lab Reservations',
-      icon: '⌘',
-      route: '/labs'
-    },
-    {
-      label: 'Events',
-      icon: '◉',
-      route: '/events'
-    },
-    {
-      label: 'Complaints',
-      icon: '!',
-      route: '/complaints'
-    },
-    {
-      label: 'Certificates',
-      icon: '▤',
-      route: '/certificates'
-    },
-    {
-      label: 'Fees & Payments',
-      icon: '₨',
-      route: '/fees'
-    },
-    {
-      label: 'Notifications',
-      icon: '♢',
-      route: '/notifications'
-    }
-  ];
+readonly isAdmin =
+  this.currentUser?.role.toLowerCase() === 'admin';
+
+readonly navigationItems: NavigationItem[] =
+  this.isAdmin
+    ? [
+        {
+          label: 'Dashboard',
+          icon: '⌂',
+          route: '/dashboard'
+        },
+        {
+          label: 'Fee Management',
+          icon: '₨',
+          route: '/admin/fees'
+        },
+        {
+          label: 'Notifications',
+          icon: '♢',
+          route: '/notifications'
+        }
+      ]
+    : [
+        {
+          label: 'Dashboard',
+          icon: '⌂',
+          route: '/dashboard'
+        },
+        {
+          label: 'My Profile',
+          icon: '♙',
+          route: '/profile'
+        },
+        {
+          label: 'Hostel',
+          icon: '▦',
+          route: '/hostels'
+        },
+        {
+          label: 'Lab Reservations',
+          icon: '⌘',
+          route: '/labs'
+        },
+        {
+          label: 'Events',
+          icon: '◉',
+          route: '/events'
+        },
+        {
+          label: 'Complaints',
+          icon: '!',
+          route: '/complaints'
+        },
+        {
+          label: 'Certificates',
+          icon: '▤',
+          route: '/certificates'
+        },
+        {
+          label: 'Fees & Payments',
+          icon: '₨',
+          route: '/fees'
+        },
+        {
+          label: 'Notifications',
+          icon: '♢',
+          route: '/notifications'
+        }
+      ];
 
   get initials(): string {
     const name = this.currentUser?.fullName;

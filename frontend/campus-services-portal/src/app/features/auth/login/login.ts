@@ -71,10 +71,16 @@ export class Login {
       email: formValue.email.trim(),
       password: formValue.password.trim()
     }).subscribe({
-      next: () => {
-        this.isSubmitting = false;
-        this.router.navigate(['/dashboard']);
-      },
+      next: (response) => {
+  this.isSubmitting = false;
+
+  if (response.role.toLowerCase() === 'admin') {
+    this.router.navigate(['/admin/fees']);
+    return;
+  }
+
+  this.router.navigate(['/dashboard']);
+},
       error: error => {
         this.isSubmitting = false;
 

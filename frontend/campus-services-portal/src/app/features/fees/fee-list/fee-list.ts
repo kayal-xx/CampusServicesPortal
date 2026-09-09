@@ -3,11 +3,11 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Fee, FeePayment } from '../../../core/services/fee';
 import { StudentService } from '../../../core/services/student';
 import { StudentProfile } from '../../../core/models/student.model';
-
+import { Navbar } from '../../../shared/navbar/navbar';
 @Component({
   selector: 'app-fee-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, Navbar],
   templateUrl: './fee-list.html',
   styleUrl: './fee-list.css'
 })

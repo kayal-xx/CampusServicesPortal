@@ -6,12 +6,13 @@ import {
   CertificateRequestItem,
   CreateCertificateRequest
 } from '../models/certificate.model';
-
+import { environment } from '../../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
 export class CertificateService {
-  private readonly requestsUrl = '/api/certificate-requests';
+  private readonly requestsUrl =
+  `${environment.apiUrl}/certificate-requests`;
 
   constructor(private http: HttpClient) {}
 

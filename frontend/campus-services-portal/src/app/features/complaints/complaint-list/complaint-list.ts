@@ -11,15 +11,17 @@ import {
   ComplaintItem
 } from '../../../core/models/complaint.model';
 import { ComplaintService } from '../../../core/services/complaint.service';
-
+import { Auth } from '../../../core/services/auth';
+import { Navbar } from '../../../shared/navbar/navbar';
 type ComplaintTab = 'list' | 'new';
 
 @Component({
   selector: 'app-complaint-list',
-  imports: [
-    CommonModule,
-    FormsModule
-  ],
+ imports: [
+  CommonModule,
+  FormsModule,
+  Navbar
+],
   templateUrl: './complaint-list.html',
   styleUrl: './complaint-list.css'
 })
@@ -40,17 +42,27 @@ export class ComplaintList implements OnInit {
   successMessage = '';
 
   // Replace this with the authenticated student ID later.
-  readonly studentId = 1;
+  studentId = 0;
 
-  constructor(
-    private complaintService: ComplaintService,
-    private changeDetectorRef: ChangeDetectorRef
-  ) {}
+ constructor(
+  private complaintService: ComplaintService,
+  private changeDetectorRef: ChangeDetectorRef,
+  private authService: Auth
+) {}
 
-  ngOnInit(): void {
-    this.loadComplaints();
-    this.loadCategories();
+ ngOnInit(): void {
+  const currentUser = this.authService.getCurrentUser();
+
+  if (!currentUser) {
+    this.errorMessage = 'Please sign in again.';
+    return;
   }
+
+  this.studentId = currentUser.studentId;
+
+  this.loadComplaints();
+  this.loadCategories();
+}
 
   setTab(tab: ComplaintTab): void {
     this.activeTab = tab;

@@ -13,7 +13,8 @@ import {
   CertificateType
 } from '../../../core/models/certificate.model';
 import { CertificateService } from '../../../core/services/certificate.service';
-
+import { Auth } from '../../../core/services/auth';
+import { Navbar } from '../../../shared/navbar/navbar';
 type CertificateTab = 'list' | 'new';
 type CertificateFilter =
   | 'all'
@@ -31,9 +32,10 @@ interface CertificateDraft {
 @Component({
   selector: 'app-certificate-list',
   imports: [
-    CommonModule,
-    FormsModule
-  ],
+  CommonModule,
+  FormsModule,
+  Navbar
+],
   templateUrl: './certificate-list.html',
   styleUrl: './certificate-list.css'
 })
@@ -59,16 +61,25 @@ export class CertificateList implements OnInit {
 
   // Replace this value with the authenticated student ID
   // after authentication is fully connected.
-  readonly studentId = 1;
+  studentId = 0;
 
   constructor(
-    private certificateService: CertificateService,
-    private changeDetectorRef: ChangeDetectorRef
-  ) {}
+  private certificateService: CertificateService,
+  private changeDetectorRef: ChangeDetectorRef,
+  private authService: Auth
+) {}
 
-  ngOnInit(): void {
-    this.loadRequests();
+ ngOnInit(): void {
+  const currentUser = this.authService.getCurrentUser();
+
+  if (!currentUser) {
+    this.errorMessage = 'Please sign in again.';
+    return;
   }
+
+  this.studentId = currentUser.studentId;
+  this.loadRequests();
+}
 
   get filteredRequests(): CertificateRequestItem[] {
     if (this.activeFilter === 'all') {
