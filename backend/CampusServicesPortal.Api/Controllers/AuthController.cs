@@ -58,4 +58,64 @@ public class AuthController : ControllerBase
             });
         }
     }
+    [AllowAnonymous]
+    [HttpPost("forgot-password")]
+    public async Task<IActionResult> ForgotPassword(
+    ForgotPasswordRequestDto request)
+    {
+        await _authService.ForgotPasswordAsync(request);
+
+        return Ok(new
+        {
+            message = "If the email is registered, a verification code has been sent."
+        });
+    }
+
+   
+    [AllowAnonymous]
+    [HttpPost("verify-otp")]
+    public async Task<IActionResult> VerifyOtp(
+    VerifyOtpRequestDto request)
+    {
+        var result = await _authService.VerifyOtpAsync(request);
+
+        if (!result)
+        {
+            return BadRequest(new
+            {
+                message = "Invalid or expired verification code."
+            });
+        }
+
+        return Ok(new
+        {
+            message = "Verification successful."
+        });
+    }
+
+    [AllowAnonymous]
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPassword(
+    ResetPasswordRequestDto request)
+    {
+        try
+        {
+            await _authService.ResetPasswordAsync(request);
+
+            return Ok(new
+            {
+                message = "Password reset successfully."
+            });
+        }
+        catch (InvalidOperationException exception)
+        {
+            return BadRequest(new
+            {
+                message = exception.Message
+            });
+        }
+    }
+
+
+
 }
