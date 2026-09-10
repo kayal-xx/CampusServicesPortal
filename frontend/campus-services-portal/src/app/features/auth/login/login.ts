@@ -102,4 +102,7 @@ export class Login {
       }
     });
   }
+  forgotPassword(): void {
+  this.router.navigate(['/forgot-password']);
+}
 }
