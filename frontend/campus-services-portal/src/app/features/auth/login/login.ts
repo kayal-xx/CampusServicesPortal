@@ -72,16 +72,17 @@ export class Login {
       password: formValue.password.trim()
     }).subscribe({
       next: (response) => {
-  this.isSubmitting = false;
+        this.isSubmitting = false;
 
-  if (response.role.toLowerCase() === 'admin') {
-    this.router.navigate(['/admin/fees']);
-    return;
-  }
+        if (response.role.toLowerCase() === 'admin') {
+          this.router.navigate(['/dashboard']);
+          return;
+        }
 
-  this.router.navigate(['/dashboard']);
-},
-      error: error => {
+        this.router.navigate(['/profile']);
+      },
+
+      error: (error) => {
         this.isSubmitting = false;
 
         if (error.status === 401) {

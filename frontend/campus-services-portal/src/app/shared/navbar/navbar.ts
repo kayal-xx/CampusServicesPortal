@@ -27,16 +27,16 @@ export class Navbar {
   private readonly authService = inject(Auth);
   private readonly router = inject(Router);
 
-isMobileMenuOpen = false;
+  isMobileMenuOpen = false;
 
-readonly currentUser = this.authService.getCurrentUser();
+  readonly currentUser = this.authService.getCurrentUser();
 
-readonly isAdmin =
-  this.currentUser?.role.toLowerCase() === 'admin';
+  readonly isAdmin =
+    this.currentUser?.role.toLowerCase() === 'admin';
 
-readonly navigationItems: NavigationItem[] =
-  this.isAdmin
-    ? [
+  readonly navigationItems: NavigationItem[] =
+    this.isAdmin
+      ? [
         {
           label: 'Dashboard',
           icon: '⌂',
@@ -53,12 +53,8 @@ readonly navigationItems: NavigationItem[] =
           route: '/notifications'
         }
       ]
-    : [
-        {
-          label: 'Dashboard',
-          icon: '⌂',
-          route: '/dashboard'
-        },
+      : [
+       
         {
           label: 'My Profile',
           icon: '♙',
