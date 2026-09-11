@@ -1,0 +1,273 @@
+<div class="student-management">
+
+  <div class="page-header">
+    <div>
+      <h1>Student Management</h1>
+      <p>Manage student accounts and registration.</p>
+    </div>
+
+    <button class="add-btn" type="button" (click)="openCreateForm()">
+      + Add Student
+    </button>
+  </div>
+
+  <!-- Messages -->
+  <div class="message success" *ngIf="successMessage">
+    {{ successMessage }}
+  </div>
+
+  <div class="message error" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Search & Filter -->
+  <div class="filters">
+    <div class="search-box">
+      <label>Search</label>
+      <input
+        type="text"
+        [(ngModel)]="search"
+        placeholder="Search by name or index number"
+        (keyup.enter)="loadStudents()"
+      />
+    </div>
+
+    <div class="faculty-box">
+      <label>Faculty</label>
+      <input
+        type="text"
+        [(ngModel)]="faculty"
+        placeholder="Enter faculty"
+        (keyup.enter)="loadStudents()"
+      />
+    </div>
+
+    <button
+      class="search-btn"
+      type="button"
+      (click)="loadStudents()"
+    >
+      Search
+    </button>
+
+    <button
+      class="clear-btn"
+      type="button"
+      (click)="search = ''; faculty = ''; loadStudents()"
+    >
+      Clear
+    </button>
+  </div>
+
+  <!-- Create Student Form -->
+  <div class="form-card" *ngIf="showCreateForm">
+
+    <div class="form-header">
+      <div>
+        <h2>Add New Student</h2>
+        <p>Create a new student login account.</p>
+      </div>
+
+      <button
+        class="close-btn"
+        type="button"
+        (click)="closeCreateForm()"
+      >
+        ×
+      </button>
+    </div>
+
+    <form (ngSubmit)="createStudent()">
+
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label>Full Name</label>
+          <input
+            type="text"
+            name="fullName"
+            [(ngModel)]="newStudent.fullName"
+            placeholder="Enter full name"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Index Number</label>
+          <input
+            type="text"
+            name="indexNumber"
+            [(ngModel)]="newStudent.indexNumber"
+            placeholder="Enter index number"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Email</label>
+          <input
+            type="email"
+            name="email"
+            [(ngModel)]="newStudent.email"
+            placeholder="Enter email address"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Faculty</label>
+          <input
+            type="text"
+            name="faculty"
+            [(ngModel)]="newStudent.faculty"
+            placeholder="Enter faculty"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Contact Number</label>
+          <input
+            type="text"
+            name="contactNumber"
+            [(ngModel)]="newStudent.contactNumber"
+            placeholder="Enter contact number"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Password</label>
+          <input
+            type="password"
+            name="password"
+            [(ngModel)]="newStudent.password"
+            placeholder="Create login password"
+            required
+          />
+        </div>
+
+      </div>
+
+      <div class="form-actions">
+        <button
+          class="cancel-btn"
+          type="button"
+          (click)="closeCreateForm()"
+        >
+          Cancel
+        </button>
+
+        <button
+          class="submit-btn"
+          type="submit"
+          [disabled]="loading"
+        >
+          {{ loading ? 'Creating...' : 'Create Student' }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- Students Table -->
+  <div class="table-card">
+
+    <div class="table-header">
+      <div>
+        <h2>Students</h2>
+        <span>{{ students.length }} student(s)</span>
+      </div>
+
+      <button
+        class="refresh-btn"
+        type="button"
+        (click)="loadStudents()"
+        [disabled]="loading"
+      >
+        ↻ Refresh
+      </button>
+    </div>
+
+    <div class="loading" *ngIf="loading && students.length === 0">
+      Loading students...
+    </div>
+
+    <div class="table-wrapper" *ngIf="students.length > 0">
+
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Student</th>
+            <th>Index Number</th>
+            <th>Email</th>
+            <th>Faculty</th>
+            <th>Contact</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let student of students; let i = index">
+
+            <td>{{ i + 1 }}</td>
+
+            <td>
+              <div class="student-name">
+                {{ student.fullName }}
+              </div>
+            </td>
+
+            <td>{{ student.indexNumber }}</td>
+
+            <td>{{ student.email }}</td>
+
+            <td>{{ student.faculty }}</td>
+
+            <td>{{ student.contactNumber }}</td>
+
+            <td>
+              <span
+                class="status"
+                [class.active]="student.isActive"
+                [class.inactive]="!student.isActive"
+              >
+                {{ student.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+
+            <td>
+              <button
+                *ngIf="student.isActive"
+                class="deactivate-btn"
+                type="button"
+                (click)="deactivateStudent(student)"
+              >
+                Deactivate
+              </button>
+
+              <span
+                class="deactivated-text"
+                *ngIf="!student.isActive"
+              >
+                Deactivated
+              </span>
+            </td>
+
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+
+    <div class="empty-state" *ngIf="!loading && students.length === 0">
+      <div class="empty-icon">👨‍🎓</div>
+      <h3>No students found</h3>
+      <p>There are no students matching your search.</p>
+    </div>
+
+  </div>
+
+</div>

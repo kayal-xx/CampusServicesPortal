@@ -116,4 +116,29 @@ public class StudentRepository
 
         return true;
     }
+    public async Task AddPasswordResetTokenAsync(
+    PasswordResetToken token)
+    {
+        await _context.PasswordResetTokens.AddAsync(token);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<PasswordResetToken?> GetLatestPasswordResetTokenAsync(
+    string email)
+    {
+        return await _context.PasswordResetTokens
+            .Where(x => x.Email == email)
+            .OrderByDescending(x => x.CreatedAt)
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task UpdatePasswordResetAsync(
+        Student student,
+        PasswordResetToken token)
+    {
+        _context.Students.Update(student);
+        _context.PasswordResetTokens.Update(token);
+
+        await _context.SaveChangesAsync();
+    }
 }

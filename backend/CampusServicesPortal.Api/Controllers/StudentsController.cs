@@ -18,6 +18,31 @@ public class StudentsController : ControllerBase
         _studentService = studentService;
     }
 
+    // Admin-only student creation
+    [HttpPost]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<StudentDto>> Create(
+        CreateStudentDto request)
+    {
+        try
+        {
+            var student = await _studentService.CreateAsync(request);
+
+            return CreatedAtAction(
+                nameof(GetById),
+                new { id = student.Id },
+                student
+            );
+        }
+        catch (InvalidOperationException exception)
+        {
+            return Conflict(new
+            {
+                message = exception.Message
+            });
+        }
+    }
+
     // Student can view own profile.
     // Admin can view any student profile.
     [HttpGet("{id:int}")]

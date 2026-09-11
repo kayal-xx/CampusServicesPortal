@@ -1,5 +1,6 @@
 using System.Text;
 using CampusServicesPortal.Api.Data;
+using CampusServicesPortal.Api.Services;
 using CampusServicesPortal.Api.Interfaces.Repositories;
 using CampusServicesPortal.Api.Interfaces.Services;
 using CampusServicesPortal.Api.Repositories;
@@ -106,6 +107,8 @@ builder.Services.AddScoped<
 builder.Services.AddScoped<
     IDashboardService,
     DashboardService>();
+
+builder.Services.AddScoped<EmailService>();
 
 // Angular CORS
 builder.Services.AddCors(options =>
