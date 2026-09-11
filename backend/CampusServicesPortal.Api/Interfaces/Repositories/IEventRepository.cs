@@ -13,16 +13,32 @@ public interface IEventRepository
     Task<int> GetRegistrationCountAsync(int eventId);
     Task<bool> IsStudentRegisteredAsync(int studentId, int eventId);
 
-    Task<EventRegistration> RegisterAsync(EventRegistration registration);
+    Task<EventRegistration> RegisterAsync(
+        EventRegistration registration
+    );
 
     Task<List<EventRegistration>> GetStudentRegistrationsAsync(
         int studentId
     );
 
-    Task<EventRegistration?> GetRegistrationByIdAsync(int registrationId);
+    Task<EventRegistration?> GetRegistrationByIdAsync(
+        int registrationId
+    );
 
     Task<bool> CancelRegistrationAsync(
         int registrationId,
         int studentId
+    );
+
+    // Admin
+    Task<List<EventRegistration>> GetAllRegistrationsAsync();
+
+    Task<bool> ApproveRegistrationAsync(
+        int registrationId
+    );
+
+    Task<bool> RejectRegistrationAsync(
+        int registrationId,
+        string rejectReason
     );
 }

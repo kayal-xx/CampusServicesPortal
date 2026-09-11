@@ -79,4 +79,71 @@ public class EventRegistrationsController : ControllerBase
 
         return NoContent();
     }
+
+    // Admin - View all registration requests
+    [HttpGet("admin")]
+    public async Task<ActionResult<List<EventRegistrationDto>>>
+        GetAllRegistrations()
+    {
+        List<EventRegistrationDto> registrations =
+            await _eventService.GetAllRegistrationsAsync();
+
+        return Ok(registrations);
+    }
+
+    // Admin - Approve registration
+    [HttpPut("{id:int}/approve")]
+    public async Task<IActionResult> ApproveRegistration(int id)
+    {
+        var result =
+            await _eventService.ApproveRegistrationAsync(id);
+
+        if (!result.Success)
+        {
+            return NotFound(new
+            {
+                message = result.Message
+            });
+        }
+
+        return Ok(new
+        {
+            message = result.Message
+        });
+    }
+
+    // Admin - Reject registration with reason
+    [HttpPut("{id:int}/reject")]
+    public async Task<IActionResult> RejectRegistration(
+        int id,
+        [FromBody] string rejectReason
+    )
+    {
+        var result =
+            await _eventService.RejectRegistrationAsync(
+                id,
+                rejectReason
+            );
+
+        if (!result.Success)
+        {
+            if (result.Message == "Registration not found.")
+            {
+                return NotFound(new
+                {
+                    message = result.Message
+                });
+            }
+
+            return BadRequest(new
+            {
+                message = result.Message
+            });
+        }
+
+        return Ok(new
+        {
+            message = result.Message
+        });
+    }
 }

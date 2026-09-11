@@ -136,4 +136,62 @@ public class EventRepository : IEventRepository
 
         return true;
     }
+
+    // Admin - Get all event registration requests
+    public async Task<List<EventRegistration>>
+        GetAllRegistrationsAsync()
+    {
+        return await _context.EventRegistrations
+            .AsNoTracking()
+            .Include(r => r.Student)
+            .Include(r => r.Event)
+            .OrderByDescending(r => r.RegisteredAt)
+            .ToListAsync();
+    }
+
+    // Admin - Approve registration
+    public async Task<bool>
+        ApproveRegistrationAsync(int registrationId)
+    {
+        EventRegistration? registration =
+            await _context.EventRegistrations
+                .FirstOrDefaultAsync(r => r.Id == registrationId);
+
+        if (registration is null)
+        {
+            return false;
+        }
+
+        registration.Status = "Approved";
+        registration.RejectReason = null;
+
+        await _context.SaveChangesAsync();
+
+        return true;
+    }
+
+    // Admin - Reject registration with reason
+    public async Task<bool>
+        RejectRegistrationAsync(
+            int registrationId,
+            string rejectReason
+        )
+    {
+        EventRegistration? registration =
+            await _context.EventRegistrations
+                .FirstOrDefaultAsync(r => r.Id == registrationId);
+
+        if (registration is null)
+        {
+            return false;
+        }
+
+        registration.Status = "Rejected";
+        registration.RejectReason = rejectReason.Trim();
+
+        await _context.SaveChangesAsync();
+
+        return true;
+    }
+
 }

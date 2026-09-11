@@ -219,6 +219,86 @@ public class EventService : IEventService
         );
     }
 
+    // Admin - Get all event registration requests
+    public async Task<List<EventRegistrationDto>>
+        GetAllRegistrationsAsync()
+    {
+        List<EventRegistration> registrations =
+            await _eventRepository.GetAllRegistrationsAsync();
+
+        return registrations.Select(r =>
+            new EventRegistrationDto
+            {
+                Id = r.Id,
+                StudentId = r.StudentId,
+                EventId = r.EventId,
+                EventTitle = r.Event?.Title ?? string.Empty,
+                EventDate = r.Event?.EventDate ?? default,
+                Venue = r.Event?.Venue ?? string.Empty,
+                RegisteredAt = r.RegisteredAt,
+                Status = r.Status,
+                RejectReason = r.RejectReason
+            }
+        ).ToList();
+    }
+
+    // Admin - Approve registration
+    public async Task<(bool Success, string Message)>
+        ApproveRegistrationAsync(int registrationId)
+    {
+        bool approved =
+            await _eventRepository
+                .ApproveRegistrationAsync(registrationId);
+
+        if (!approved)
+        {
+            return (
+                false,
+                "Registration not found."
+            );
+        }
+
+        return (
+            true,
+            "Event registration approved successfully."
+        );
+    }
+
+    // Admin - Reject registration with reason
+    public async Task<(bool Success, string Message)>
+        RejectRegistrationAsync(
+            int registrationId,
+            string rejectReason
+        )
+    {
+        if (string.IsNullOrWhiteSpace(rejectReason))
+        {
+            return (
+                false,
+                "Reject reason is required."
+            );
+        }
+
+        bool rejected =
+            await _eventRepository.RejectRegistrationAsync(
+                registrationId,
+                rejectReason
+            );
+
+        if (!rejected)
+        {
+            return (
+                false,
+                "Registration not found."
+            );
+        }
+
+        return (
+            true,
+            "Event registration rejected successfully."
+        );
+    }
+
     private async Task<EventDto> MapToEventDtoAsync(
         Event eventItem
     )

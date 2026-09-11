@@ -51,8 +51,13 @@ export class Navbar {
           label: 'Notifications',
           icon: '♢',
           route: '/notifications'
+        },
+        {
+          label: 'Events',
+          icon: '◉',
+          route: '/events'
         }
-      ]
+       ]
       : [
        
         {

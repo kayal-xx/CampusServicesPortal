@@ -14,11 +14,7 @@
           <input type="text" placeholder="Search..." />
         </div>
 
-        <button
-          class="notification-button"
-          type="button"
-          aria-label="Notifications"
-        >
+        <button class="notification-button" type="button" aria-label="Notifications">
           ♧
           <span class="notification-dot"></span>
         </button>
@@ -42,8 +38,15 @@
           </p>
         </div>
 
-        <div class="event-count">
-          {{ filteredEvents.length }} events found
+        <div class="page-heading-actions">
+          <button *ngIf="isAdmin" type="button" class="create-event-button" (click)="openCreateEvent()">
+            <span>+</span>
+            Create Event
+          </button>
+
+          <div class="event-count">
+            {{ filteredEvents.length }} events found
+          </div>
         </div>
       </div>
 
@@ -51,51 +54,29 @@
         <div class="event-search">
           <span>⌕</span>
 
-          <input
-            type="search"
-            [(ngModel)]="searchText"
-            placeholder="Search events..."
-          />
+          <input type="search" [(ngModel)]="searchText" placeholder="Search events..." />
         </div>
 
         <div class="filter-buttons">
-          <button
-            type="button"
-            [class.active]="activeFilter === 'all'"
-            (click)="setFilter('all')"
-          >
+          <button type="button" [class.active]="activeFilter === 'all'" (click)="setFilter('all')">
             All
           </button>
 
-          <button
-            type="button"
-            [class.active]="activeFilter === 'upcoming'"
-            (click)="setFilter('upcoming')"
-          >
+          <button type="button" [class.active]="activeFilter === 'upcoming'" (click)="setFilter('upcoming')">
             Upcoming
           </button>
 
-          <button
-            type="button"
-            [class.active]="activeFilter === 'past'"
-            (click)="setFilter('past')"
-          >
+          <button type="button" [class.active]="activeFilter === 'past'" (click)="setFilter('past')">
             Past
           </button>
         </div>
       </div>
 
-      <div
-        *ngIf="successMessage"
-        class="message success-message"
-      >
+      <div *ngIf="successMessage" class="message success-message">
         ✓ {{ successMessage }}
       </div>
 
-      <div
-        *ngIf="errorMessage"
-        class="message error-message"
-      >
+      <div *ngIf="errorMessage" class="message error-message">
         ⚠ {{ errorMessage }}
       </div>
 
@@ -104,42 +85,86 @@
         <p>Loading events...</p>
       </div>
 
-      <div
-        *ngIf="!isLoading && filteredEvents.length === 0"
-        class="empty-state"
-      >
+      <div *ngIf="!isLoading && filteredEvents.length === 0" class="empty-state">
         <div class="empty-icon">▣</div>
         <h2>No events found</h2>
         <p>Try changing your search or event filter.</p>
       </div>
 
-      <div
-        *ngIf="!isLoading && filteredEvents.length > 0"
-        class="events-grid"
-      >
-        <article
-          *ngFor="let event of filteredEvents; let index = index"
-          class="event-card"
-        >
-          <div
-            class="event-image"
-            [ngClass]="imageClass(index)"
-          >
+      <!-- ADMIN EVENTS VIEW -->
+
+      <div *ngIf="isAdmin && !isLoading" class="admin-events-section">
+
+        <div class="admin-section-header">
+          <div>
+            <h2>Event Management</h2>
+            <p>Manage events and review student registrations.</p>
+          </div>
+        </div>
+
+        <div class="admin-event-list">
+
+          <div *ngFor="let event of filteredEvents" class="admin-event-card">
+
+            <div class="admin-event-info">
+
+              <h3>{{ event.title }}</h3>
+
+              <p>{{ event.description }}</p>
+
+              <div class="admin-event-meta">
+                <span>📍 {{ event.venue }}</span>
+
+                <span>
+                  📅 {{ event.eventDate | date:'medium' }}
+                </span>
+
+                <span>
+                  👥 {{ getEventRegistrations(event.id).length }}
+                  Participants
+                </span>
+              </div>
+
+            </div>
+
+            <div class="admin-event-actions">
+
+              <button type="button" class="view-participants-button" (click)="openParticipants(event)">
+                View Participants
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <div *ngIf="!isAdmin && !isLoading && filteredEvents.length > 0" class="events-grid">
+        <article *ngFor="let event of filteredEvents; let index = index" class="event-card">
+          <div class="event-image" [ngClass]="imageClass(index)">
             <span class="category-badge">
               {{ index % 2 === 0 ? 'Academic' : 'Workshop' }}
             </span>
 
-            <span
-              *ngIf="isRegistered(event.id)"
-              class="registration-badge registered"
-            >
-              ✓ Registered
-            </span>
+            <ng-container *ngIf="getRegistration(event.id) as registration">
 
-            <span
-              *ngIf="!isRegistered(event.id) && event.isFull"
-              class="registration-badge full"
-            >
+              <span *ngIf="registration.status === 'Pending'" class="registration-badge pending">
+                ⏳ Pending
+              </span>
+
+              <span *ngIf="registration.status === 'Approved'" class="registration-badge registered">
+                ✓ Approved
+              </span>
+
+              <span *ngIf="registration.status === 'Rejected'" class="registration-badge rejected">
+                ✕ Rejected
+              </span>
+
+            </ng-container>
+
+            <span *ngIf="!isRegistered(event.id) && event.isFull" class="registration-badge full">
               Full
             </span>
 
@@ -173,10 +198,7 @@
 
             <div class="capacity">
               <div class="capacity-track">
-                <div
-                  class="capacity-progress"
-                  [style.width.%]="registrationPercentage(event)"
-                ></div>
+                <div class="capacity-progress" [style.width.%]="registrationPercentage(event)"></div>
               </div>
 
               <span>
@@ -188,35 +210,31 @@
               {{ event.description }}
             </p>
 
+            <div *ngIf="
+                  getRegistration(event.id)?.status === 'Rejected' &&
+                  getRegistration(event.id)?.rejectReason
+                 " class="rejection-message">
+              <strong>Rejection Reason:</strong>
+              {{ getRegistration(event.id)?.rejectReason }}
+            </div>
+
             <div class="card-actions">
-              <button
-                class="details-button"
-                type="button"
-                (click)="openDetails(event)"
-              >
+              <button class="details-button" type="button" (click)="openDetails(event)">
                 View Details
               </button>
 
-              <button
-                class="register-button"
-                type="button"
-                [class.registered-button]="isRegistered(event.id)"
+              <button class="register-button" type="button" [class.registered-button]="isRegistered(event.id)"
                 [class.full-button]="
                   event.isFull && !isRegistered(event.id)
-                "
-                [disabled]="
+                " [disabled]="
                   event.isFull ||
                   isRegistered(event.id) ||
                   registeringEventId === event.id
-                "
-                (click)="register(event)"
-              >
-                <ng-container
-                  *ngIf="
+                " (click)="register(event)">
+                <ng-container *ngIf="
                     registeringEventId === event.id;
                     else buttonText
-                  "
-                >
+                  ">
                   Registering...
                 </ng-container>
 
@@ -225,21 +243,17 @@
                     ✓ Registered
                   </span>
 
-                  <span
-                    *ngIf="
+                  <span *ngIf="
                       !isRegistered(event.id) &&
                       event.isFull
-                    "
-                  >
+                    ">
                     Event Full
                   </span>
 
-                  <span
-                    *ngIf="
+                  <span *ngIf="
                       !isRegistered(event.id) &&
                       !event.isFull
-                    "
-                  >
+                    ">
                     Register
                   </span>
                 </ng-template>
@@ -254,24 +268,10 @@
 
 <!-- Event details modal -->
 
-<div
-  *ngIf="selectedEvent as event"
-  class="modal-overlay"
-  (click)="closeDetails()"
->
-  <section
-    class="event-modal"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="event-modal-title"
-    (click)="$event.stopPropagation()"
-  >
-    <button
-      class="modal-close"
-      type="button"
-      aria-label="Close event details"
-      (click)="closeDetails()"
-    >
+<div *ngIf="selectedEvent as event" class="modal-overlay" (click)="closeDetails()">
+  <section class="event-modal" role="dialog" aria-modal="true" aria-labelledby="event-modal-title"
+    (click)="$event.stopPropagation()">
+    <button class="modal-close" type="button" aria-label="Close event details" (click)="closeDetails()">
       ×
     </button>
 
@@ -280,17 +280,11 @@
         Campus Event
       </span>
 
-      <span
-        *ngIf="isRegistered(event.id)"
-        class="registration-badge registered"
-      >
+      <span *ngIf="isRegistered(event.id)" class="registration-badge registered">
         ✓ Registered
       </span>
 
-      <span
-        *ngIf="!isRegistered(event.id) && event.isFull"
-        class="registration-badge full"
-      >
+      <span *ngIf="!isRegistered(event.id) && event.isFull" class="registration-badge full">
         Full
       </span>
 
@@ -348,10 +342,7 @@
 
       <div class="modal-capacity">
         <div class="capacity-track">
-          <div
-            class="capacity-progress"
-            [style.width.%]="registrationPercentage(event)"
-          ></div>
+          <div class="capacity-progress" [style.width.%]="registrationPercentage(event)"></div>
         </div>
       </div>
 
@@ -361,47 +352,222 @@
       </div>
 
       <div class="modal-actions">
-        <button
-          class="modal-secondary-button"
-          type="button"
-          (click)="closeDetails()"
-        >
+        <button class="modal-secondary-button" type="button" (click)="closeDetails()">
           Close
         </button>
 
-        <button
-          *ngIf="!isRegistered(event.id)"
-          class="modal-register-button"
-          type="button"
-          [disabled]="
+        <button *ngIf="!isRegistered(event.id)" class="modal-register-button" type="button" [disabled]="
             event.isFull ||
             registeringEventId === event.id
-          "
-          (click)="register(event)"
-        >
+          " (click)="register(event)">
           {{
-            registeringEventId === event.id
-              ? 'Registering...'
-              : event.isFull
-                ? 'Event Full'
-                : 'Register for Event'
+          registeringEventId === event.id
+          ? 'Registering...'
+          : event.isFull
+          ? 'Event Full'
+          : 'Register for Event'
           }}
         </button>
 
-        <button
-          *ngIf="isRegistered(event.id)"
-          class="cancel-registration-button"
-          type="button"
-          [disabled]="cancellingEventId === event.id"
-          (click)="cancelRegistration(event)"
-        >
+        <button *ngIf="isRegistered(event.id)" class="cancel-registration-button" type="button"
+          [disabled]="cancellingEventId === event.id" (click)="cancelRegistration(event)">
           {{
-            cancellingEventId === event.id
-              ? 'Cancelling...'
-              : 'Cancel Registration'
+          cancellingEventId === event.id
+          ? 'Cancelling...'
+          : 'Cancel Registration'
           }}
         </button>
       </div>
     </div>
+  </section>
+</div>
+
+<!-- Admin Participants Modal -->
+
+<div *ngIf="selectedParticipantsEvent as event" class="modal-overlay" (click)="closeParticipants()">
+  <section class="event-modal participants-modal" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
+
+    <button class="modal-close" type="button" aria-label="Close participants" (click)="closeParticipants()">
+      ×
+    </button>
+
+    <div class="modal-content">
+
+      <h2>{{ event.title }}</h2>
+
+      <p class="participants-subtitle">
+        Student registrations for this event
+      </p>
+
+      <div *ngIf="getEventRegistrations(event.id).length === 0" class="no-participants">
+        No students have registered for this event yet.
+      </div>
+
+      <div *ngFor="let registration of getEventRegistrations(event.id)" class="participant-card">
+
+        <div class="participant-info">
+
+          <strong>
+            Student #{{ registration.studentId }}
+          </strong>
+
+          <span>
+            Registered:
+            {{ registration.registeredAt | date:'medium' }}
+          </span>
+
+          <span *ngIf="registration.status === 'Rejected' &&
+                   registration.rejectReason" class="participant-reason">
+            Reason: {{ registration.rejectReason }}
+          </span>
+
+        </div>
+
+        <div class="participant-actions">
+
+          <span class="participant-status" [class.pending]="registration.status === 'Pending'"
+            [class.approved]="registration.status === 'Approved'" [class.rejected]="registration.status === 'Rejected'">
+            {{ registration.status }}
+          </span>
+
+          <div *ngIf="registration.status === 'Pending'">
+
+            <button type="button" class="approve-button" [disabled]="isProcessingRegistrationId === registration.id"
+              (click)="approveRegistration(registration.id)">
+              {{
+              isProcessingRegistrationId === registration.id
+              ? 'Processing...'
+              : 'Approve'
+              }}
+            </button>
+
+            <button type="button" class="reject-button" [disabled]="isProcessingRegistrationId === registration.id"
+              (click)="openRejectModal(registration.id)">
+              Reject
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="modal-actions">
+
+        <button class="modal-secondary-button" type="button" (click)="closeParticipants()">
+          Close
+        </button>
+
+      </div>
+
+    </div>
+
+  </section>
+</div>
+
+<!-- Reject Registration Modal -->
+
+<div *ngIf="isRejectModalOpen" class="modal-overlay">
+  <section class="event-modal reject-modal" role="dialog" aria-modal="true">
+
+    <button class="modal-close" type="button" aria-label="Close reject modal" (click)="closeRejectModal()">
+      ×
+    </button>
+
+    <div class="modal-content">
+
+      <h2>Reject Registration</h2>
+
+      <p class="reject-subtitle">
+        Please provide a reason for rejecting this student's registration.
+      </p>
+
+      <div class="form-group">
+        <label>Rejection Reason</label>
+
+        <textarea [(ngModel)]="rejectReason" rows="4" placeholder="Enter rejection reason..."></textarea>
+      </div>
+
+      <div class="modal-actions">
+
+        <button type="button" class="modal-secondary-button" (click)="closeRejectModal()">
+          Cancel
+        </button>
+
+        <button type="button" class="reject-confirm-button" [disabled]="!rejectReason.trim()"
+          (click)="rejectRegistration()">
+          Reject Registration
+        </button>
+
+      </div>
+
+    </div>
+
+  </section>
+</div>
+
+<!-- Create Event modal -->
+
+<div *ngIf="isCreateEventOpen" class="modal-overlay">
+  <section class="event-modal create-event-modal" role="dialog" aria-modal="true">
+
+    <button class="modal-close" type="button" aria-label="Close create event" (click)="closeCreateEvent()">
+      ×
+    </button>
+
+    <div class="modal-content">
+
+      <h2>Create New Event</h2>
+      <p class="create-event-subtitle">
+        Add a new campus event for students.
+      </p>
+
+      <div class="create-event-form">
+
+        <div class="form-group">
+          <label>Event Title</label>
+          <input type="text" [(ngModel)]="newEvent.title" placeholder="Enter event title" />
+        </div>
+
+        <div class="form-group">
+          <label>Description</label>
+          <textarea [(ngModel)]="newEvent.description" rows="4" placeholder="Enter event description"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Venue</label>
+          <input type="text" [(ngModel)]="newEvent.venue" placeholder="Enter venue" />
+        </div>
+
+        <div class="form-row">
+
+          <div class="form-group">
+            <label>Date & Time</label>
+            <input type="datetime-local" [(ngModel)]="newEvent.eventDate" />
+          </div>
+
+          <div class="form-group">
+            <label>Capacity</label>
+            <input type="number" [(ngModel)]="newEvent.capacity" min="1" placeholder="50" />
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="modal-actions">
+
+        <button class="modal-secondary-button" type="button" (click)="closeCreateEvent()">
+          Cancel
+        </button>
+
+        <button class="modal-register-button" type="button" (click)="createEvent()" [disabled]="isCreatingEvent">
+          {{ isCreatingEvent ? 'Creating...' : 'Create Event' }}
+        </button>
+
+      </div>
+
+    </div>
+
   </section>
 </div>
