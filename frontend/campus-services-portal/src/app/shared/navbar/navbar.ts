@@ -43,6 +43,11 @@ export class Navbar {
           route: '/dashboard'
         },
         {
+          label: 'Student Management',
+          icon: '♙',
+          route: '/admin/students'
+        },
+        {
           label: 'Fee Management',
           icon: '₨',
           route: '/admin/fees'
@@ -54,7 +59,6 @@ export class Navbar {
         }
       ]
       : [
-       
         {
           label: 'My Profile',
           icon: '♙',
