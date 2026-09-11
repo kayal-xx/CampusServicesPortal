@@ -23,5 +23,7 @@ public class HostelApplicationDto
 
     public string Status { get; set; } = string.Empty;
 
+public string RejectionReason { get; set; } = string.Empty;
+
     public DateTime CreatedAt { get; set; }
 }

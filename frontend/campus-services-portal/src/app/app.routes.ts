@@ -10,7 +10,9 @@ import { EventList } from './features/events/event-list/event-list';
 import { FeeList } from './features/fees/fee-list/fee-list';
 import { FeeManagement } from './features/fees/fee-management/fee-management';
 import { HostelList } from './features/hostel/hostel-list/hostel-list';
+import { HostelManagement } from './features/hostel/hostel-management/hostel-management';
 import { LabList } from './features/labs/lab-list/lab-list';
+import { LabManagement } from './features/labs/lab-management/lab-management';
 import { NotificationList } from './features/notifications/notification-list/notification-list';
 import { StudentList } from './features/students/student-list/student-list';
 import { adminGuard } from './core/guards/admin.guard';
@@ -23,7 +25,7 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: Dashboard,
-    canActivate: [ adminGuard, authGuard ],
+    canActivate: [adminGuard, authGuard],
     title: 'Dashboard | Campus Services Portal'
   },
   {
@@ -39,10 +41,22 @@ export const routes: Routes = [
     title: 'Hostel Accommodation | Campus Services Portal'
   },
   {
+    path: 'admin/hostels',
+    component: HostelManagement,
+    canActivate: [authGuard, adminGuard],
+    title: 'Hostel Applications | Campus Services Portal'
+  },
+  {
     path: 'labs',
     component: LabList,
     canActivate: [authGuard],
     title: 'Lab Reservations | Campus Services Portal'
+  },
+  {
+    path: 'admin/labs',
+    component: LabManagement,
+    canActivate: [authGuard, adminGuard],
+    title: 'Lab Bookings | Campus Services Portal'
   },
   {
     path: 'events',

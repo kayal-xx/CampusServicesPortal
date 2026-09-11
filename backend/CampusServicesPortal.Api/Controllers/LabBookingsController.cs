@@ -51,7 +51,14 @@ public class LabBookingsController : ControllerBase
 
         return Ok(bookings);
     }
+    [HttpGet]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> GetAllBookings()
+    {
+        var bookings = await _labService.GetAllBookingsAsync();
 
+        return Ok(bookings);
+    }
     [HttpPut("{bookingId:int}/cancel")]
     public async Task<IActionResult> CancelBooking(int bookingId)
     {
@@ -83,7 +90,37 @@ public class LabBookingsController : ControllerBase
             return Conflict(new { message = exception.Message });
         }
     }
+    // Admin approves or rejects a lab booking.
+    [HttpPut("{bookingId:int}/status")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> UpdateStatus(
+        int bookingId,
+        UpdateLabBookingStatusDto request)
+    {
+        try
+        {
+            var booking =
+                await _labService.UpdateStatusAsync(
+                    bookingId,
+                    request);
 
+            return Ok(booking);
+        }
+        catch (KeyNotFoundException exception)
+        {
+            return NotFound(new
+            {
+                message = exception.Message
+            });
+        }
+        catch (InvalidOperationException exception)
+        {
+            return Conflict(new
+            {
+                message = exception.Message
+            });
+        }
+    }
     private int GetStudentId()
     {
         var studentIdValue =

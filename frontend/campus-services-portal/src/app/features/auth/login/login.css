@@ -30,8 +30,9 @@
 
 .login-page {
   display: grid;
-  grid-template-columns: minmax(520px, 1.15fr) minmax(440px, 0.85fr);
+ 
   min-height: 100vh;
+  grid-template-columns: minmax(520px, 1.15fr) minmax(440px, 0.85fr);
   background: #f7f9fc;
 }
 

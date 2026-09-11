@@ -26,7 +26,102 @@ public class LabService
             IsActive = lab.IsActive
         }).ToList();
     }
+    public async Task<LabDto> CreateLabAsync(CreateLabDto dto)
+    {
+        if (string.IsNullOrWhiteSpace(dto.Name))
+        {
+            throw new InvalidOperationException("Lab name is required.");
+        }
 
+        if (dto.Capacity < 1)
+        {
+            throw new InvalidOperationException(
+                "Lab capacity must be at least 1.");
+        }
+
+        if (await _labRepository.LabNameExistsAsync(dto.Name.Trim()))
+        {
+            throw new InvalidOperationException(
+                "A lab with this name already exists.");
+        }
+
+        var lab = new Lab
+        {
+            Name = dto.Name.Trim(),
+            Location = dto.Location.Trim(),
+            Capacity = dto.Capacity,
+            IsActive = dto.IsActive
+        };
+
+        await _labRepository.AddLabAsync(lab);
+
+        return ToLabDto(lab);
+    }
+
+    public async Task<LabDto> UpdateLabAsync(
+        int labId,
+        UpdateLabDto dto)
+    {
+        var lab = await _labRepository.GetLabForAdminAsync(labId);
+
+        if (lab is null)
+        {
+            throw new KeyNotFoundException("Lab not found.");
+        }
+
+        if (string.IsNullOrWhiteSpace(dto.Name))
+        {
+            throw new InvalidOperationException("Lab name is required.");
+        }
+
+        if (dto.Capacity < 1)
+        {
+            throw new InvalidOperationException(
+                "Lab capacity must be at least 1.");
+        }
+
+        if (await _labRepository.LabNameExistsAsync(
+            dto.Name.Trim(),
+            labId))
+        {
+            throw new InvalidOperationException(
+                "A lab with this name already exists.");
+        }
+
+        lab.Name = dto.Name.Trim();
+        lab.Location = dto.Location.Trim();
+        lab.Capacity = dto.Capacity;
+        lab.IsActive = dto.IsActive;
+
+        await _labRepository.UpdateLabAsync(lab);
+
+        return ToLabDto(lab);
+    }
+
+    public async Task DeactivateLabAsync(int labId)
+    {
+        var lab = await _labRepository.GetLabForAdminAsync(labId);
+
+        if (lab is null)
+        {
+            throw new KeyNotFoundException("Lab not found.");
+        }
+
+        lab.IsActive = false;
+
+        await _labRepository.UpdateLabAsync(lab);
+    }
+    private static LabDto ToLabDto(Lab lab)
+    {
+        return new LabDto
+        {
+            Id = lab.Id,
+            Name = lab.Name,
+            Location = lab.Location,
+            Capacity = lab.Capacity,
+            IsActive = lab.IsActive
+        };
+    }
     public async Task<LabBookingDto> CreateBookingAsync(
         int studentId,
         CreateLabBookingDto dto)
@@ -70,13 +165,14 @@ public class LabService
             BookingDate = dto.BookingDate.Date,
             StartTime = dto.StartTime,
             EndTime = dto.EndTime,
-            Status = "Booked"
+            Status = "Pending"
         };
 
         await _labRepository.AddBookingAsync(booking);
 
         return ToBookingDto(booking, lab.Name);
     }
+
 
     public async Task<List<LabBookingDto>>
         GetStudentBookingsAsync(int studentId)
@@ -91,7 +187,17 @@ public class LabService
                 booking.Student?.FullName ?? string.Empty
             )).ToList();
     }
+    public async Task<List<LabBookingDto>> GetAllBookingsAsync()
+    {
+        var bookings = await _labRepository.GetAllBookingsAsync();
 
+        return bookings.Select(booking =>
+            ToBookingDto(
+                booking,
+                booking.Lab?.Name ?? string.Empty,
+                booking.Student?.FullName ?? string.Empty
+            )).ToList();
+    }
     public async Task CancelBookingAsync(
         int bookingId,
         int studentId)
@@ -121,6 +227,45 @@ public class LabService
 
         await _labRepository.UpdateBookingAsync(booking);
     }
+    public async Task<LabBookingDto> UpdateStatusAsync(
+    int bookingId,
+    UpdateLabBookingStatusDto request)
+    {
+        var booking =
+            await _labRepository.GetBookingByIdAsync(bookingId);
+
+        if (booking is null)
+        {
+            throw new KeyNotFoundException(
+                "Lab booking not found.");
+        }
+
+        if (request.Status == "Rejected")
+        {
+            if (string.IsNullOrWhiteSpace(request.RejectionReason))
+            {
+                throw new InvalidOperationException(
+                    "Rejection reason is required.");
+            }
+
+            booking.RejectionReason =
+                request.RejectionReason.Trim();
+        }
+        else
+        {
+            booking.RejectionReason = string.Empty;
+        }
+
+        booking.Status = request.Status.Trim();
+
+        await _labRepository.UpdateBookingAsync(booking);
+
+        return ToBookingDto(
+            booking,
+            booking.Lab?.Name ?? string.Empty,
+            booking.Student?.FullName ?? string.Empty
+        );
+    }
 
     private static LabBookingDto ToBookingDto(
         LabBooking booking,
@@ -137,7 +282,8 @@ public class LabService
             BookingDate = booking.BookingDate,
             StartTime = booking.StartTime,
             EndTime = booking.EndTime,
-            Status = booking.Status
+            Status = booking.Status,
+            RejectionReason = booking.RejectionReason
         };
     }
 }

@@ -1,151 +1,169 @@
-<div class="admin-layout">
-  <app-navbar></app-navbar>
+<div class="fee-management-page">
 
-  <main class="main-content">
-<div class="admin-layout">
+  <header class="topbar">
+    <div>
+      <h1>Fee Management</h1>
+      <p>Administration</p>
+    </div>
+  </header>
 
-    <app-navbar></app-navbar>
+  <div *ngIf="loading" class="message">
+    Loading fee records...
+  </div>
 
-    <main class="main-content">
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
 
-        <header class="topbar">
-            <div>
-                <h1>Fee Management</h1>
-                <p>Administration</p>
-            </div>
-        </header>
+  <section *ngIf="!loading">
 
-        <div *ngIf="loading" class="message">
-            Loading fee records...
+    <div class="summary-grid">
+
+      <div class="summary-card">
+        <p>Total Records</p>
+        <h2>{{ totalRecords }}</h2>
+      </div>
+
+      <div class="summary-card">
+        <p>Paid</p>
+        <h2>{{ paidCount }}</h2>
+      </div>
+
+      <div class="summary-card">
+        <p>Unpaid</p>
+        <h2>{{ unpaidCount }}</h2>
+      </div>
+
+      <div class="summary-card">
+        <p>Outstanding</p>
+        <h2>
+          Rs. {{ outstandingAmount | number:'1.2-2' }}
+        </h2>
+      </div>
+
+    </div>
+
+    <div class="fee-card">
+
+      <div class="fee-card-header">
+        <div>
+          <h2>Fee Records</h2>
+          <p>Manage student fee payments</p>
         </div>
+      </div>
 
-        <div *ngIf="errorMessage" class="error-message">
-            {{ errorMessage }}
-        </div>
+      <div class="filter-bar">
 
-        <section *ngIf="!loading">
+        <input
+          type="text"
+          [(ngModel)]="searchText"
+          placeholder="Search by Student ID or Fee Type"
+          class="search-input"
+        />
 
-            <div class="summary-grid">
+        <select
+          [(ngModel)]="statusFilter"
+          class="status-filter">
 
-                <div class="summary-card">
-                    <div>
-                        <p>Total Records</p>
-                        <h2>{{ totalRecords }}</h2>
-                    </div>
-                </div>
+          <option value="All">All Status</option>
+          <option value="Paid">Paid</option>
+          <option value="Unpaid">Unpaid</option>
 
-                <div class="summary-card">
-                    <div>
-                        <p>Paid</p>
-                        <h2>{{ paidCount }}</h2>
-                    </div>
-                </div>
+        </select>
 
-                <div class="summary-card">
-                    <div>
-                        <p>Unpaid</p>
-                        <h2>{{ unpaidCount }}</h2>
-                    </div>
-                </div>
+      </div>
 
-                <div class="summary-card">
-                    <div>
-                        <p>Outstanding</p>
-                        <h2>Rs. {{ outstandingAmount | number:'1.2-2' }}</h2>
-                    </div>
-                </div>
+      <div class="table-wrapper">
 
-            </div>
+        <table>
 
-            <div class="fee-card">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Student ID</th>
+              <th>Fee Type</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Paid Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
 
-                <div class="fee-card-header">
-                    <div>
-                        <h2>Fee Records</h2>
-                        <p>Manage student fee payments</p>
-                    </div>
-                </div>
-                <div class="filter-bar">
+          <tbody>
 
-                    <input type="text" [(ngModel)]="searchText" placeholder="Search by Student ID or Fee Type"
-                        class="search-input" />
+            <tr *ngFor="let fee of filteredFees">
 
-                    <select [(ngModel)]="statusFilter" class="status-filter">
-                        <option value="All">All Status</option>
-                        <option value="Paid">Paid</option>
-                        <option value="Unpaid">Unpaid</option>
-                    </select>
+              <td>{{ fee.id }}</td>
 
-                </div>
+              <td>{{ fee.studentId }}</td>
 
-                <div class="table-wrapper">
+              <td>{{ fee.feeType }}</td>
 
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Student ID</th>
-                                <th>Fee Type</th>
-                                <th>Amount</th>
-                                <th>Status</th>
-                                <th>Paid Date</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
+              <td>
+                Rs. {{ fee.amount | number:'1.2-2' }}
+              </td>
 
-                        <tbody>
+              <td>
+                <span
+                  class="status"
+                  [class.paid]="fee.isPaid"
+                  [class.unpaid]="!fee.isPaid">
 
-                            <tr *ngFor="let fee of filteredFees">
+                  {{ fee.isPaid ? 'Paid' : 'Unpaid' }}
 
-                                <td>{{ fee.id }}</td>
+                </span>
+              </td>
 
-                                <td>{{ fee.studentId }}</td>
+              <td>
+                {{ fee.paidAt
+                  ? (fee.paidAt | date:'MMM d, y')
+                  : '-'
+                }}
+              </td>
 
-                                <td>{{ fee.feeType }}</td>
+              <td>
 
-                                <td>
-                                    Rs. {{ fee.amount | number:'1.2-2' }}
-                                </td>
+                <button
+                  *ngIf="!fee.isPaid"
+                  class="action-button"
+                  (click)="markAsPaid(fee)">
 
-                                <td>
-                                    <span class="status" [class.paid]="fee.isPaid" [class.unpaid]="!fee.isPaid">
-                                        {{ fee.isPaid ? 'Paid' : 'Unpaid' }}
-                                    </span>
-                                </td>
+                  Mark as Paid
 
-                                <td>
-                                    {{ fee.paidAt
-                                    ? (fee.paidAt | date:'MMM d, y')
-                                    : '-'
-                                    }}
-                                </td>
+                </button>
 
-                                <td>
-                                    <button *ngIf="!fee.isPaid" class="action-button" (click)="markAsPaid(fee)">
-                                        Mark as Paid
-                                    </button>
+                <span
+                  *ngIf="fee.isPaid"
+                  class="completed">
 
-                                    <span *ngIf="fee.isPaid" class="completed">
-                                        Completed
-                                    </span>
-                                </td>
+                  Completed
 
-                            </tr>
+                </span>
 
-                            <tr *ngIf="fees.length === 0">
-                                <td colspan="7" class="empty-state">
-                                    No fee records found.
-                                </td>
-                            </tr>
+              </td>
 
-                        </tbody>
-                    </table>
+            </tr>
 
-                </div>
-            </div>
+            <tr *ngIf="fees.length === 0">
 
-        </section>
+              <td
+                colspan="7"
+                class="empty-state">
 
-    </main>
+                No fee records found.
+
+              </td>
+
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  </section>
 
 </div>

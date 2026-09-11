@@ -3,22 +3,6 @@
   min-height: 100vh;
 }
 
-.portal-layout {
-  min-height: 100vh;
-  background: #f8fafc;
-}
-
-.dashboard-content {
-  min-height: 100vh;
-  margin-left: 264px;
-}
-
-@media (max-width: 900px) {
-  .dashboard-content {
-    margin-left: 0;
-    padding-top: 64px;
-  }
-}
 * {
   box-sizing: border-box;
 }

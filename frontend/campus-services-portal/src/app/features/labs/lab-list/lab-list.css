@@ -447,4 +447,19 @@ h1 {
     width: 100%;
     height: 75px;
   }
+  .rejection-reason {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: #fff1f2;
+}
+
+.rejection-reason strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.rejection-reason p {
+  margin: 0;
+}
 }

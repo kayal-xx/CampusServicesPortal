@@ -43,6 +43,16 @@ export class Navbar {
           route: '/dashboard'
         },
         {
+          label: 'Hostel Applications',
+          icon: '▦',
+          route: '/admin/hostels'
+        },
+        {
+          label: 'Lab Bookings',
+          icon: '⌘',
+          route: '/admin/labs'
+        },
+        {
           label: 'Fee Management',
           icon: '₨',
           route: '/admin/fees'
@@ -54,7 +64,7 @@ export class Navbar {
         }
       ]
       : [
-       
+
         {
           label: 'My Profile',
           icon: '♙',
