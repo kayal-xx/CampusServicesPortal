@@ -1,1 +1,7 @@
-<router-outlet></router-outlet>
+<app-navbar *ngIf="router.url !== '/login'"></app-navbar>
+
+<main
+  class="main-content"
+  [class.login-main]="router.url === '/login'">
+  <router-outlet></router-outlet>
+</main>

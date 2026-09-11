@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace CampusServicesPortal.Api.DTOs.Hostel;
+namespace CampusServicesPortal.Api.DTOs.Lab;
 
-public class UpdateHostelApplicationStatusDto
+public class UpdateLabBookingStatusDto
 {
     [Required]
     [RegularExpression(

@@ -27,51 +27,35 @@
     </section>
 
     <nav class="tabs">
-      <button
-        type="button"
-        [class.active]="activeTab === 'labs'"
-        (click)="showLabs()">
+      <button type="button" [class.active]="activeTab === 'labs'" (click)="showLabs()">
         Available Labs
       </button>
 
-      <button
-        type="button"
-        [class.active]="activeTab === 'book'"
-        (click)="openBooking()">
+      <button type="button" [class.active]="activeTab === 'book'" (click)="openBooking()">
         Book a Lab
       </button>
 
-      <button
-        type="button"
-        [class.active]="activeTab === 'bookings'"
-        (click)="showBookings()">
+      <button type="button" [class.active]="activeTab === 'bookings'" (click)="showBookings()">
         My Reservations
       </button>
     </nav>
 
-    <div
-      *ngIf="errorMessage"
-      class="message error-message">
+    <div *ngIf="errorMessage" class="message error-message">
       <strong>Unable to continue</strong>
       <span>{{ errorMessage }}</span>
     </div>
 
-    <div
-      *ngIf="successMessage"
-      class="message success-message">
+    <div *ngIf="successMessage" class="message success-message">
       <strong>Success</strong>
       <span>{{ successMessage }}</span>
     </div>
 
-    <section
-      *ngIf="isLoading"
-      class="state-card">
+    <section *ngIf="isLoading" class="state-card">
       <div class="spinner"></div>
       <p>Loading laboratory information...</p>
     </section>
 
-    <section
-      *ngIf="!isLoading && activeTab === 'labs'">
+    <section *ngIf="!isLoading && activeTab === 'labs'">
       <div class="section-heading">
         <div>
           <h2>Available Laboratories</h2>
@@ -81,12 +65,8 @@
         <strong>{{ labs.length }} labs</strong>
       </div>
 
-      <div
-        *ngIf="labs.length > 0"
-        class="lab-grid">
-        <article
-          *ngFor="let lab of labs"
-          class="lab-card">
+      <div *ngIf="labs.length > 0" class="lab-grid">
+        <article *ngFor="let lab of labs" class="lab-card">
           <div class="lab-card-icon">⌘</div>
 
           <div class="lab-card-body">
@@ -102,19 +82,14 @@
               <strong>{{ lab.capacity }} students</strong>
             </div>
 
-            <button
-              type="button"
-              class="primary-button"
-              (click)="openBooking(lab.id)">
+            <button type="button" class="primary-button" (click)="openBooking(lab.id)">
               Reserve This Lab
             </button>
           </div>
         </article>
       </div>
 
-      <div
-        *ngIf="labs.length === 0"
-        class="state-card">
+      <div *ngIf="labs.length === 0" class="state-card">
         <div class="empty-icon">⌘</div>
         <h3>No laboratories available</h3>
         <p>
@@ -124,30 +99,21 @@
       </div>
     </section>
 
-    <section
-      *ngIf="!isLoading && activeTab === 'book'"
-      class="booking-panel">
+    <section *ngIf="!isLoading && activeTab === 'book'" class="booking-panel">
       <div class="panel-heading">
         <h2>Book a Laboratory</h2>
         <p>Choose a lab, date and available time period.</p>
       </div>
 
-      <form
-        class="booking-form"
-        (ngSubmit)="submitBooking()">
+      <form class="booking-form" (ngSubmit)="submitBooking()">
         <label>
           Laboratory
-          <select
-            name="labId"
-            [(ngModel)]="selectedLabId"
-            required>
+          <select name="labId" [(ngModel)]="selectedLabId" required>
             <option [ngValue]="null">
               Select a laboratory
             </option>
 
-            <option
-              *ngFor="let lab of labs"
-              [ngValue]="lab.id">
+            <option *ngFor="let lab of labs" [ngValue]="lab.id">
               {{ lab.name }} — {{ lab.location }}
             </option>
           </select>
@@ -155,57 +121,38 @@
 
         <label>
           Booking date
-          <input
-            type="date"
-            name="bookingDate"
-            [(ngModel)]="bookingDate"
-            [min]="minimumDate"
-            required>
+          <input type="date" name="bookingDate" [(ngModel)]="bookingDate" [min]="minimumDate" required>
         </label>
 
         <div class="time-row">
           <label>
             Start time
-            <input
-              type="time"
-              name="startTime"
-              [(ngModel)]="startTime"
-              required>
+            <input type="time" name="startTime" [(ngModel)]="startTime" required>
           </label>
 
           <label>
             End time
-            <input
-              type="time"
-              name="endTime"
-              [(ngModel)]="endTime"
-              required>
+            <input type="time" name="endTime" [(ngModel)]="endTime" required>
           </label>
         </div>
 
-        <div
-          *ngIf="getSelectedLab() as selectedLab"
-          class="selected-lab">
+        <div *ngIf="getSelectedLab() as selectedLab" class="selected-lab">
           <strong>{{ selectedLab.name }}</strong>
           <span>{{ selectedLab.location }}</span>
           <span>Capacity: {{ selectedLab.capacity }}</span>
         </div>
 
-        <button
-          type="submit"
-          class="primary-button submit-button"
-          [disabled]="isSubmitting">
+        <button type="submit" class="primary-button submit-button" [disabled]="isSubmitting">
           {{
-            isSubmitting
-              ? 'Creating reservation...'
-              : 'Confirm Reservation'
+          isSubmitting
+          ? 'Creating reservation...'
+          : 'Confirm Reservation'
           }}
         </button>
       </form>
     </section>
 
-    <section
-      *ngIf="!isLoading && activeTab === 'bookings'">
+    <section *ngIf="!isLoading && activeTab === 'bookings'">
       <div class="section-heading">
         <div>
           <h2>My Reservations</h2>
@@ -215,19 +162,13 @@
         <strong>{{ bookings.length }} reservations</strong>
       </div>
 
-      <div
-        *ngIf="bookings.length > 0"
-        class="booking-list">
-        <article
-          *ngFor="let booking of bookings"
-          class="booking-card">
+      <div *ngIf="bookings.length > 0" class="booking-list">
+        <article *ngFor="let booking of bookings" class="booking-card">
           <div class="booking-details">
             <div class="card-title">
               <h3>{{ booking.labName }}</h3>
 
-              <span
-                class="status-badge"
-                [class.cancelled]="booking.status === 'Cancelled'">
+              <span class="status-badge" [class.cancelled]="booking.status === 'Cancelled'">
                 {{ booking.status }}
               </span>
             </div>
@@ -236,29 +177,27 @@
             <p>
               ◷ {{ booking.startTime }} — {{ booking.endTime }}
             </p>
+            <div *ngIf="booking.status === 'Rejected' && booking.rejectionReason" class="rejection-reason">
+
+              <strong>Rejection Reason</strong>
+              <p>{{ booking.rejectionReason }}</p>
+
+            </div>
           </div>
 
-          <button
-            *ngIf="booking.status !== 'Cancelled'"
-            type="button"
-            class="danger-button"
+          <button *ngIf="booking.status !== 'Cancelled'" type="button" class="danger-button"
             (click)="cancelBooking(booking)">
             Cancel Reservation
           </button>
         </article>
       </div>
 
-      <div
-        *ngIf="bookings.length === 0"
-        class="state-card">
+      <div *ngIf="bookings.length === 0" class="state-card">
         <div class="empty-icon">⌘</div>
         <h3>No reservations yet</h3>
         <p>Your laboratory reservations will appear here.</p>
 
-        <button
-          type="button"
-          class="primary-button small-button"
-          (click)="openBooking()">
+        <button type="button" class="primary-button small-button" (click)="openBooking()">
           Book a Laboratory
         </button>
       </div>

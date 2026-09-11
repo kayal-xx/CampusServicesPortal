@@ -12,7 +12,7 @@ public class LabBooking
     public TimeSpan EndTime { get; set; }
 
     public string Status { get; set; } = "Booked";
-
+    public string RejectionReason { get; set; } = string.Empty;
     public Student? Student { get; set; }
     public Lab? Lab { get; set; }
 }
