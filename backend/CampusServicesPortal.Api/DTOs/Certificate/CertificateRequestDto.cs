@@ -8,5 +8,6 @@ public class CertificateRequestDto
     public string Reason { get; set; } = string.Empty;
     public int Copies { get; set; }
     public string Status { get; set; } = string.Empty;
+    public string RejectionReason { get; set; } = string.Empty;
     public DateTime RequestedAt { get; set; }
 }

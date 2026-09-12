@@ -12,9 +12,9 @@ import { environment } from '../../../environments/environment';
 })
 export class CertificateService {
   private readonly requestsUrl =
-  `${environment.apiUrl}/certificate-requests`;
+    `${environment.apiUrl}/certificate-requests`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getRequests(status?: string): Observable<CertificateRequestItem[]> {
     let params = new HttpParams();
@@ -51,6 +51,19 @@ export class CertificateService {
     return this.http.post<CertificateRequestItem[]>(
       this.requestsUrl,
       request
+    );
+  }
+  updateRequestStatus(
+    requestId: number,
+    status: 'Pending' | 'Approved' | 'Rejected' | 'Ready for Collection',
+    rejectionReason: string = ''
+  ): Observable<void> {
+    return this.http.put<void>(
+      `${this.requestsUrl}/${requestId}/status`,
+      {
+        status,
+        rejectionReason
+      }
     );
   }
 }

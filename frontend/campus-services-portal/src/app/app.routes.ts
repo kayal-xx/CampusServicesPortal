@@ -1,4 +1,3 @@
-@'
 import { Routes } from '@angular/router';
 
 import { authGuard } from './core/guards/auth.guard';
@@ -26,7 +25,7 @@ import { NotificationList } from './features/notifications/notification-list/not
 
 import { StudentList } from './features/students/student-list/student-list';
 import { StudentManagement } from './features/admin/student-management/student-management';
-
+import { CertificateManagement } from './features/admin/certificate-management/certificate-management';
 export const routes: Routes = [
   {
     path: 'login',
@@ -117,6 +116,12 @@ export const routes: Routes = [
     canActivate: [authGuard, adminGuard],
     title: 'Student Management | Campus Services Portal'
   },
+  {
+    path: 'admin/certificates',
+    component: CertificateManagement,
+    canActivate: [authGuard, adminGuard],
+    title: 'Certificate Management | Campus Services Portal'
+  },
 
   {
     path: 'notifications',
@@ -154,4 +159,3 @@ export const routes: Routes = [
     redirectTo: 'login'
   }
 ];
-'@ | Set-Content ".\frontend\campus-services-portal\src\app\app.routes.ts"

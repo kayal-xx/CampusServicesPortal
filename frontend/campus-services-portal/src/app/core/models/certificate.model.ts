@@ -16,6 +16,7 @@ export interface CertificateRequestItem {
   reason: string;
   copies: number;
   status: string;
+  rejectionReason: string;
   requestedAt: string;
 }
 

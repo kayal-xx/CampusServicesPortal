@@ -1,0 +1,382 @@
+<div class="admin-page">
+
+  <header class="topbar">
+    <div>
+      <div class="breadcrumb">Administration / Certificates</div>
+      <h1>Certificate Management</h1>
+      <p>Review and manage student certificate requests.</p>
+    </div>
+
+    <div class="topbar-actions">
+      <div class="search-box">
+        <span>⌕</span>
+        <input
+          type="text"
+          [(ngModel)]="search"
+          placeholder="Search requests..."
+        />
+      </div>
+
+      <button class="icon-button" type="button">
+        🔔
+      </button>
+
+      <div class="admin-profile">
+        <div class="avatar">A</div>
+        <div>
+          <strong>Admin</strong>
+          <span>Administrator</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="content">
+
+    <div class="page-title-row">
+      <div>
+        <h2>Certificate Requests</h2>
+        <span>{{ filteredRequests.length }} requests</span>
+      </div>
+    </div>
+
+    <div
+      *ngIf="successMessage"
+      class="alert success"
+    >
+      ✓ {{ successMessage }}
+    </div>
+
+    <div
+      *ngIf="errorMessage"
+      class="alert error"
+    >
+      ⚠ {{ errorMessage }}
+    </div>
+
+    <section class="filters">
+
+      <div class="filter-group">
+        <label>Status</label>
+
+        <select
+          [(ngModel)]="statusFilter"
+          (change)="onStatusFilterChange()"
+        >
+          <option
+            *ngFor="let status of statuses"
+            [value]="status"
+          >
+            {{ status }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Certificate Type</label>
+
+        <select
+          [(ngModel)]="typeFilter"
+        >
+          <option
+            *ngFor="let type of certificateTypes"
+            [value]="type"
+          >
+            {{ type }}
+          </option>
+        </select>
+      </div>
+
+      <button
+        class="refresh-button"
+        type="button"
+        (click)="loadRequests()"
+      >
+        ↻ Refresh
+      </button>
+
+    </section>
+
+    <section class="table-card">
+
+      <div *ngIf="loading" class="loading">
+        <div class="spinner"></div>
+        <span>Loading certificate requests...</span>
+      </div>
+
+      <div
+        *ngIf="!loading && filteredRequests.length === 0"
+        class="empty-state"
+      >
+        <div class="empty-icon">▧</div>
+        <h3>No certificate requests found</h3>
+        <p>
+          No requests match your current filters.
+        </p>
+      </div>
+
+      <div
+        *ngIf="!loading && filteredRequests.length > 0"
+        class="table-wrapper"
+      >
+
+        <table>
+
+          <thead>
+            <tr>
+              <th>REQUEST ID</th>
+              <th>STUDENT</th>
+              <th>CERTIFICATE TYPE</th>
+              <th>COPIES</th>
+              <th>DATE</th>
+              <th>STATUS</th>
+              <th>ACTION</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            <tr
+              *ngFor="let request of filteredRequests"
+            >
+
+              <td>
+                <span class="request-id">
+                  {{ requestNumber(request.id) }}
+                </span>
+              </td>
+
+              <td>
+                <div class="student-cell">
+                  <div class="student-avatar">
+                    S
+                  </div>
+
+                  <div>
+                    <strong>
+                      Student #{{ request.studentId }}
+                    </strong>
+
+                    <span>
+                      ID: {{ request.studentId }}
+                    </span>
+                  </div>
+                </div>
+              </td>
+
+              <td>
+                <div class="certificate-cell">
+                  <div class="certificate-icon">
+                    ▧
+                  </div>
+
+                  <span>
+                    {{ request.certificateType }}
+                  </span>
+                </div>
+              </td>
+
+              <td>
+                <strong>
+                  {{ request.copies }}
+                </strong>
+              </td>
+
+              <td>
+                {{ formatDate(request.requestedAt) }}
+              </td>
+
+              <td>
+                <span
+                  class="status-badge"
+                  [ngClass]="statusClass(request.status)"
+                >
+                  {{ request.status }}
+                </span>
+              </td>
+
+              <td>
+                <button
+                  class="update-button"
+                  type="button"
+                  (click)="openUpdate(request)"
+                >
+                  Update
+                </button>
+              </td>
+
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+
+<!-- Update Modal -->
+
+<div
+  *ngIf="selectedRequest"
+  class="modal-backdrop"
+  (click)="closeUpdate()"
+>
+
+  <section
+    class="modal"
+    (click)="$event.stopPropagation()"
+  >
+
+    <div class="modal-header">
+
+      <div>
+        <span class="modal-reference">
+          {{ requestNumber(selectedRequest.id) }}
+        </span>
+
+        <h2>Update Certificate Request</h2>
+
+        <p>
+          {{ selectedRequest.certificateType }}
+        </p>
+      </div>
+
+      <button
+        class="close-button"
+        type="button"
+        (click)="closeUpdate()"
+      >
+        ×
+      </button>
+
+    </div>
+
+
+    <div class="modal-body">
+
+      <div class="request-summary">
+
+        <div>
+          <span>Student</span>
+          <strong>
+            #{{ selectedRequest.studentId }}
+          </strong>
+        </div>
+
+        <div>
+          <span>Copies</span>
+          <strong>
+            {{ selectedRequest.copies }}
+          </strong>
+        </div>
+
+        <div>
+          <span>Requested</span>
+          <strong>
+            {{ formatDate(selectedRequest.requestedAt) }}
+          </strong>
+        </div>
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label>Status</label>
+
+        <select
+          [(ngModel)]="editStatus"
+        >
+          <option value="Pending">
+            Pending
+          </option>
+
+          <option value="Approved">
+            Approved
+          </option>
+
+          <option value="Rejected">
+            Rejected
+          </option>
+
+          <option value="Ready for Collection">
+            Ready for Collection
+          </option>
+        </select>
+
+      </div>
+
+
+      <div
+        *ngIf="editStatus === 'Rejected'"
+        class="form-group"
+      >
+
+        <label>
+          Rejection Reason
+          <span>*</span>
+        </label>
+
+        <textarea
+          [(ngModel)]="rejectionReason"
+          rows="4"
+          maxlength="500"
+          placeholder="Enter the reason for rejecting this certificate request..."
+        ></textarea>
+
+        <small>
+          {{ rejectionReason.length }} / 500
+        </small>
+
+      </div>
+
+
+      <div
+        *ngIf="
+          selectedRequest.status === 'Rejected' &&
+          selectedRequest.rejectionReason
+        "
+        class="existing-reason"
+      >
+
+        <strong>Previous Rejection Reason</strong>
+
+        <p>
+          {{ selectedRequest.rejectionReason }}
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <div class="modal-footer">
+
+      <button
+        class="cancel-button"
+        type="button"
+        (click)="closeUpdate()"
+      >
+        Cancel
+      </button>
+
+      <button
+        class="save-button"
+        type="button"
+        [disabled]="updating"
+        (click)="updateStatus()"
+      >
+        {{ updating ? 'Updating...' : 'Update Request' }}
+      </button>
+
+    </div>
+
+  </section>
+
+</div>
