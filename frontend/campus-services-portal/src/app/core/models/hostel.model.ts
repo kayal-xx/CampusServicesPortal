@@ -5,6 +5,14 @@ export interface Hostel {
   isActive: boolean;
 }
 
+export interface HostelRoom {
+  id: number;
+  hostelId: number;
+  roomNumber: string;
+  capacity: number;
+  occupiedCount: number;
+  isAvailable: boolean;
+}
 export interface CreateHostelApplication {
   hostelId: number;
   semester: string;
@@ -22,5 +30,6 @@ export interface HostelApplication {
   semester: string;
   specialRequirements: string;
   status: string;
+  rejectionReason: string;
   createdAt: string;
 }

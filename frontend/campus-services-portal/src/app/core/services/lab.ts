@@ -14,10 +14,42 @@ import {
 export class LabService {
   private readonly apiUrl = 'http://localhost:5266/api';
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) { }
 
   getLabs(): Observable<Lab[]> {
     return this.http.get<Lab[]>(`${this.apiUrl}/labs`);
+  }
+  createLab(data: {
+    name: string;
+    location: string;
+    capacity: number;
+    isActive: boolean;
+  }): Observable<Lab> {
+    return this.http.post<Lab>(
+      `${this.apiUrl}/labs`,
+      data
+    );
+  }
+
+  updateLab(
+    id: number,
+    data: {
+      name: string;
+      location: string;
+      capacity: number;
+      isActive: boolean;
+    }
+  ): Observable<Lab> {
+    return this.http.put<Lab>(
+      `${this.apiUrl}/labs/${id}`,
+      data
+    );
+  }
+
+  deactivateLab(id: number): Observable<ApiMessage> {
+    return this.http.delete<ApiMessage>(
+      `${this.apiUrl}/labs/${id}`
+    );
   }
 
   getMyBookings(): Observable<LabBooking[]> {
@@ -39,6 +71,26 @@ export class LabService {
     return this.http.put<ApiMessage>(
       `${this.apiUrl}/lab-bookings/${bookingId}/cancel`,
       {}
+    );
+  }
+  getAllBookings(status?: string): Observable<LabBooking[]> {
+    const url = status
+      ? `${this.apiUrl}/lab-bookings?status=${encodeURIComponent(status)}`
+      : `${this.apiUrl}/lab-bookings`;
+
+    return this.http.get<LabBooking[]>(url);
+  }
+  updateBookingStatus(
+    bookingId: number,
+    status: 'Approved' | 'Rejected',
+    rejectionReason: string = ''
+  ): Observable<LabBooking> {
+    return this.http.put<LabBooking>(
+      `${this.apiUrl}/lab-bookings/${bookingId}/status`,
+      {
+        status,
+        rejectionReason
+      }
     );
   }
 }

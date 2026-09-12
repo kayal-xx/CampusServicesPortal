@@ -16,6 +16,7 @@ export interface LabBooking {
   startTime: string;
   endTime: string;
   status: string;
+  rejectionReason: string;
 }
 
 export interface CreateLabBooking {

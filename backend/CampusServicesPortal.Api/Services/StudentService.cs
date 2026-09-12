@@ -1,6 +1,7 @@
 using CampusServicesPortal.Api.DTOs.Student;
 using CampusServicesPortal.Api.Entities;
 using CampusServicesPortal.Api.Repositories;
+using Microsoft.AspNetCore.Identity;
 
 namespace CampusServicesPortal.Api.Services;
 
@@ -39,6 +40,61 @@ public class StudentService
         return students
             .Select(MapToDto)
             .ToList();
+    }
+
+    // Admin creates a new student account
+    public async Task<StudentDto> CreateAsync(
+        CreateStudentDto request)
+    {
+        var emailExists =
+            await _studentRepository.EmailExistsAsync(
+                request.Email
+            );
+
+        if (emailExists)
+        {
+            throw new InvalidOperationException(
+                "This email address is already registered."
+            );
+        }
+
+        var indexNumberExists =
+            await _studentRepository.IndexNumberExistsAsync(
+                request.IndexNumber
+            );
+
+        if (indexNumberExists)
+        {
+            throw new InvalidOperationException(
+                "This index number is already registered."
+            );
+        }
+
+        var student = new Student
+        {
+            FullName = request.FullName.Trim(),
+            IndexNumber = request.IndexNumber.Trim().ToUpper(),
+            Email = request.Email.Trim().ToLower(),
+            Faculty = request.Faculty.Trim(),
+            ContactNumber = request.ContactNumber.Trim(),
+
+            // Admin creates Student accounts only
+            Role = "Student",
+
+            IsActive = true,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        var passwordHasher = new PasswordHasher<Student>();
+
+        student.PasswordHash = passwordHasher.HashPassword(
+            student,
+            request.Password
+        );
+
+        await _studentRepository.AddAsync(student);
+
+        return MapToDto(student);
     }
 
     // Update student profile

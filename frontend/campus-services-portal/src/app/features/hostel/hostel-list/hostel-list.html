@@ -14,18 +14,10 @@
         <div class="search-box">
           <span aria-hidden="true">⌕</span>
 
-          <input
-            type="search"
-            placeholder="Search campus services"
-            aria-label="Search campus services"
-          />
+          <input type="search" placeholder="Search campus services" aria-label="Search campus services" />
         </div>
 
-        <button
-          class="notification-button"
-          type="button"
-          aria-label="Notifications"
-        >
+        <button class="notification-button" type="button" aria-label="Notifications">
           ♢
           <span></span>
         </button>
@@ -48,56 +40,30 @@
         </div>
       </section>
 
-      <nav
-        class="tabs"
-        aria-label="Hostel sections"
-      >
-        <button
-          type="button"
-          [class.active]="activeTab === 'hostels'"
-          (click)="setActiveTab('hostels')"
-        >
+      <nav class="tabs" aria-label="Hostel sections">
+        <button type="button" [class.active]="activeTab === 'hostels'" (click)="setActiveTab('hostels')">
           Available Hostels
         </button>
 
-        <button
-          type="button"
-          [class.active]="activeTab === 'apply'"
-          (click)="setActiveTab('apply')"
-        >
+        <button type="button" [class.active]="activeTab === 'apply'" (click)="setActiveTab('apply')">
           Apply for Hostel
         </button>
 
-        <button
-          type="button"
-          [class.active]="activeTab === 'applications'"
-          (click)="setActiveTab('applications')"
-        >
+        <button type="button" [class.active]="activeTab === 'applications'" (click)="setActiveTab('applications')">
           My Applications
 
-          <span
-            class="count-badge"
-            *ngIf="applications.length"
-          >
+          <span class="count-badge" *ngIf="applications.length">
             {{ applications.length }}
           </span>
         </button>
       </nav>
 
-      <div
-        class="message error-message"
-        role="alert"
-        *ngIf="errorMessage"
-      >
+      <div class="message error-message" role="alert" *ngIf="errorMessage">
         <strong>Unable to continue</strong>
         <span>{{ errorMessage }}</span>
       </div>
 
-      <div
-        class="message success-message"
-        role="status"
-        *ngIf="successMessage"
-      >
+      <div class="message success-message" role="status" *ngIf="successMessage">
         <strong>Success</strong>
         <span>{{ successMessage }}</span>
       </div>
@@ -114,21 +80,15 @@
           <span>{{ hostels.length }} hostels</span>
         </div>
 
-        <div
-          class="loading-card"
-          *ngIf="isLoadingHostels"
-        >
+        <div class="loading-card" *ngIf="isLoadingHostels">
           <span class="spinner"></span>
           <p>Loading available hostels...</p>
         </div>
 
-        <div
-          class="empty-card"
-          *ngIf="
+        <div class="empty-card" *ngIf="
             !isLoadingHostels &&
             hostels.length === 0
-          "
-        >
+          ">
           <div aria-hidden="true">▦</div>
           <h3>No hostels available</h3>
           <p>
@@ -137,21 +97,12 @@
           </p>
         </div>
 
-        <div
-          class="hostel-grid"
-          *ngIf="
+        <div class="hostel-grid" *ngIf="
             !isLoadingHostels &&
             hostels.length > 0
-          "
-        >
-          <article
-            class="hostel-card"
-            *ngFor="let hostel of hostels; let index = index"
-          >
-            <div
-              class="hostel-visual"
-              [class.alternate]="index % 2 !== 0"
-            >
+          ">
+          <article class="hostel-card" *ngFor="let hostel of hostels; let index = index">
+            <div class="hostel-visual" [class.alternate]="index % 2 !== 0">
               <div class="building-icon" aria-hidden="true">
                 ▦
               </div>
@@ -187,10 +138,7 @@
                   Active
                 </span>
 
-                <button
-                  type="button"
-                  (click)="selectHostel(hostel)"
-                >
+                <button type="button" (click)="selectHostel(hostel)">
                   Apply Now
                   <span aria-hidden="true">→</span>
                 </button>
@@ -200,10 +148,7 @@
         </div>
       </section>
 
-      <section
-        class="application-section"
-        *ngIf="activeTab === 'apply'"
-      >
+      <section class="application-section" *ngIf="activeTab === 'apply'">
         <div class="application-information">
           <p class="section-label">NEW APPLICATION</p>
           <h2>Apply for campus accommodation</h2>
@@ -244,14 +189,9 @@
           </div>
         </div>
 
-        <form
-          class="application-form"
-          [formGroup]="applicationForm"
-          (ngSubmit)="submitApplication()"
-          novalidate
-        >
+        <form class="application-form" [formGroup]="applicationForm" (ngSubmit)="submitApplication()" novalidate>
           <header>
-            <h2>Hostel Application</h2>
+            <h2>Hostel Management</h2>
             <p>All fields marked with * are required.</p>
           </header>
 
@@ -260,36 +200,25 @@
               Select hostel *
             </label>
 
-            <select
-              id="hostelId"
-              formControlName="hostelId"
-            >
+            <select id="hostelId" formControlName="hostelId">
               <option [ngValue]="0">
                 Select an available hostel
               </option>
 
-              <option
-                *ngFor="let hostel of hostels"
-                [ngValue]="hostel.id"
-              >
+              <option *ngFor="let hostel of hostels" [ngValue]="hostel.id">
                 {{ hostel.name }} — {{ hostel.location }}
               </option>
             </select>
 
-            <small
-              *ngIf="
+            <small *ngIf="
                 applicationForm.controls.hostelId.invalid &&
                 applicationForm.controls.hostelId.touched
-              "
-            >
+              ">
               Select a hostel.
             </small>
           </div>
 
-          <div
-            class="selected-hostel"
-            *ngIf="applicationForm.controls.hostelId.value > 0"
-          >
+          <div class="selected-hostel" *ngIf="applicationForm.controls.hostelId.value > 0">
             <span aria-hidden="true">▦</span>
 
             <div>
@@ -303,19 +232,12 @@
               Required semester *
             </label>
 
-            <input
-              id="semester"
-              type="text"
-              formControlName="semester"
-              placeholder="Example: Semester 1 - 2026/2027"
-            />
+            <input id="semester" type="text" formControlName="semester" placeholder="Example: Semester 1 - 2026/2027" />
 
-            <small
-              *ngIf="
+            <small *ngIf="
                 applicationForm.controls.semester.invalid &&
                 applicationForm.controls.semester.touched
-              "
-            >
+              ">
               Enter the required semester.
             </small>
           </div>
@@ -325,21 +247,16 @@
               Special requirements
             </label>
 
-            <textarea
-              id="specialRequirements"
-              rows="5"
-              maxlength="500"
-              formControlName="specialRequirements"
-              placeholder="Describe any accessibility, medical or other accommodation requirements."
-            ></textarea>
+            <textarea id="specialRequirements" rows="5" maxlength="500" formControlName="specialRequirements"
+              placeholder="Describe any accessibility, medical or other accommodation requirements."></textarea>
 
             <div class="field-meta">
               <span>Optional</span>
 
               <span>
                 {{
-                  applicationForm.controls
-                    .specialRequirements.value.length
+                applicationForm.controls
+                .specialRequirements.value.length
                 }}/500
               </span>
             </div>
@@ -354,20 +271,13 @@
             </p>
           </div>
 
-          <button
-            class="submit-button"
-            type="submit"
-            [disabled]="isSubmitting"
-          >
-            <span
-              class="button-spinner"
-              *ngIf="isSubmitting"
-            ></span>
+          <button class="submit-button" type="submit" [disabled]="isSubmitting">
+            <span class="button-spinner" *ngIf="isSubmitting"></span>
 
             {{
-              isSubmitting
-                ? 'Submitting application...'
-                : 'Submit Application'
+            isSubmitting
+            ? 'Submitting application...'
+            : 'Submit Application'
             }}
           </button>
         </form>
@@ -383,30 +293,20 @@
             </p>
           </div>
 
-          <button
-            class="refresh-button"
-            type="button"
-            (click)="loadApplications()"
-          >
+          <button class="refresh-button" type="button" (click)="loadApplications()">
             ↻ Refresh
           </button>
         </div>
 
-        <div
-          class="loading-card"
-          *ngIf="isLoadingApplications"
-        >
+        <div class="loading-card" *ngIf="isLoadingApplications">
           <span class="spinner"></span>
           <p>Loading your applications...</p>
         </div>
 
-        <div
-          class="empty-card"
-          *ngIf="
+        <div class="empty-card" *ngIf="
             !isLoadingApplications &&
             applications.length === 0
-          "
-        >
+          ">
           <div aria-hidden="true">▤</div>
           <h3>No applications yet</h3>
           <p>
@@ -414,25 +314,16 @@
             your first application.
           </p>
 
-          <button
-            type="button"
-            (click)="setActiveTab('hostels')"
-          >
+          <button type="button" (click)="setActiveTab('hostels')">
             Browse Hostels
           </button>
         </div>
 
-        <div
-          class="application-list"
-          *ngIf="
+        <div class="application-list" *ngIf="
             !isLoadingApplications &&
             applications.length > 0
-          "
-        >
-          <article
-            class="application-card"
-            *ngFor="let application of applications"
-          >
+          ">
+          <article class="application-card" *ngFor="let application of applications">
             <div class="application-main">
               <div class="application-icon" aria-hidden="true">
                 ▦
@@ -442,12 +333,9 @@
                 <div class="application-title">
                   <h3>{{ application.hostelName }}</h3>
 
-                  <span
-                    class="status"
-                    [ngClass]="
+                  <span class="status" [ngClass]="
                       getStatusClass(application.status)
-                    "
-                  >
+                    ">
                     {{ application.status }}
                   </span>
                 </div>
@@ -465,8 +353,8 @@
                 <dt>Applied on</dt>
                 <dd>
                   {{
-                    application.createdAt
-                      | date: 'dd MMM yyyy'
+                  application.createdAt
+                  | date: 'dd MMM yyyy'
                   }}
                 </dd>
               </div>
@@ -475,8 +363,8 @@
                 <dt>Room assignment</dt>
                 <dd>
                   {{
-                    application.roomNumber ||
-                    'Not assigned yet'
+                  application.roomNumber ||
+                  'Not assigned yet'
                   }}
                 </dd>
               </div>
@@ -485,10 +373,14 @@
                 <dt>Special requirements</dt>
                 <dd>
                   {{
-                    application.specialRequirements ||
-                    'None provided'
+                  application.specialRequirements ||
+                  'None provided'
                   }}
                 </dd>
+              </div>
+              <div *ngIf="application.status === 'Rejected' && application.rejectionReason">
+                <dt>Rejection reason</dt>
+                <dd>{{ application.rejectionReason }}</dd>
               </div>
             </dl>
           </article>

@@ -147,8 +147,27 @@ public class HostelService
             );
         }
 
-        application.Status = request.Status.Trim();
-        application.RoomId = null;
+       var status = request.Status.Trim();
+
+if (status == "Rejected")
+{
+    if (string.IsNullOrWhiteSpace(request.RejectionReason))
+    {
+        throw new InvalidOperationException(
+            "Rejection reason is required."
+        );
+    }
+
+    application.RejectionReason =
+        request.RejectionReason.Trim();
+}
+else
+{
+    application.RejectionReason = string.Empty;
+}
+
+application.Status = status;
+application.RoomId = null;
 
         await _hostelRepository.UpdateApplicationAsync(application);
 
@@ -416,8 +435,9 @@ public class HostelService
             Semester = application.Semester,
             SpecialRequirements =
                 application.SpecialRequirements,
-            Status = application.Status,
-            CreatedAt = application.CreatedAt
+           Status = application.Status,
+          RejectionReason = application.RejectionReason,
+         CreatedAt = application.CreatedAt
         };
     }
 }
