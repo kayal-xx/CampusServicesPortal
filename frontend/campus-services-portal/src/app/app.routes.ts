@@ -26,7 +26,7 @@ import { NotificationList } from './features/notifications/notification-list/not
 
 import { StudentList } from './features/students/student-list/student-list';
 import { StudentManagement } from './features/admin/student-management/student-management';
-
+import { CertificateManagement } from './features/admin/certificate-management/certificate-management';
 export const routes: Routes = [
 
   {
@@ -118,6 +118,12 @@ export const routes: Routes = [
     canActivate: [authGuard, adminGuard],
     title: 'Student Management | Campus Services Portal'
   },
+  {
+    path: 'admin/certificates',
+    component: CertificateManagement,
+    canActivate: [authGuard, adminGuard],
+    title: 'Certificate Management | Campus Services Portal'
+  },
 
   {
     path: 'notifications',
@@ -150,7 +156,7 @@ export const routes: Routes = [
     pathMatch: 'full'
   },
 
-  {
+   {
     path: '**',
     redirectTo: 'login'
   }
