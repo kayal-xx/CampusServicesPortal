@@ -1626,3 +1626,22 @@ input {
     justify-content: flex-start;
   }
 }
+.delete-event-button {
+  border: none;
+  border-radius: 7px;
+  padding: 10px 15px;
+  color: #ffffff;
+  background: #c0392b;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  margin-left: 8px;
+}
+
+.delete-event-button:hover {
+  background: #a93226;
+}
+
+.delete-event-button:active {
+  transform: scale(0.98);
+}

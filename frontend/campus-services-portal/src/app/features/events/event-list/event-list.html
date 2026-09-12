@@ -11,11 +11,11 @@
       <div class="topbar-actions">
         <div class="top-search">
           <span>⌕</span>
-          <input type="text" placeholder="Search..." />
+          <input type="text" [(ngModel)]="searchText" placeholder="Search..." />
         </div>
 
-        <button class="notification-button" type="button" aria-label="Notifications">
-          ♧
+        <button class="notification-button" type="button" aria-label="Notifications" routerLink="/notifications">
+          🔔
           <span class="notification-dot"></span>
         </button>
 
@@ -51,11 +51,11 @@
       </div>
 
       <div class="event-toolbar">
-        <div class="event-search">
+        <!-- <div class="event-search">
           <span>⌕</span>
 
           <input type="search" [(ngModel)]="searchText" placeholder="Search events..." />
-        </div>
+        </div> -->
 
         <div class="filter-buttons">
           <button type="button" [class.active]="activeFilter === 'all'" (click)="setFilter('all')">
@@ -131,6 +131,10 @@
 
               <button type="button" class="view-participants-button" (click)="openParticipants(event)">
                 View Participants
+              </button>
+
+              <button type="button" class="delete-event-button" (click)="deleteEvent(event)">
+                Delete
               </button>
 
             </div>
