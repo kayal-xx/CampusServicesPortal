@@ -156,56 +156,75 @@ public class CertificateService : ICertificateService
     }
 
     public async Task<(bool Success, string Message)>
-        UpdateStatusAsync(
-            int id,
-            UpdateCertificateRequestStatusDto dto
-        )
+    UpdateStatusAsync(
+        int id,
+        UpdateCertificateRequestStatusDto dto
+    )
+{
+    CertificateRequest? request =
+        await _certificateRepository.GetByIdAsync(id);
+
+    if (request is null)
     {
-        CertificateRequest? request =
-            await _certificateRepository.GetByIdAsync(id);
-
-        if (request is null)
-        {
-            return (
-                false,
-                "Certificate request not found."
-            );
-        }
-
-        string? validStatus =
-            AllowedStatuses.FirstOrDefault(
-                status => status.Equals(
-                    dto.Status.Trim(),
-                    StringComparison.OrdinalIgnoreCase
-                )
-            );
-
-        if (validStatus is null)
-        {
-            return (
-                false,
-                "Status must be Pending, Approved, Rejected, or Ready for Collection."
-            );
-        }
-
-        if (validStatus == "Ready for Collection" &&
-            request.Status != "Approved")
-        {
-            return (
-                false,
-                "Only an approved certificate can be marked as ready for collection."
-            );
-        }
-
-        request.Status = validStatus;
-
-        await _certificateRepository.UpdateAsync(request);
-
         return (
-            true,
-            "Certificate request status updated successfully."
+            false,
+            "Certificate request not found."
         );
     }
+
+    string? validStatus =
+        AllowedStatuses.FirstOrDefault(
+            status => status.Equals(
+                dto.Status.Trim(),
+                StringComparison.OrdinalIgnoreCase
+            )
+        );
+
+    if (validStatus is null)
+    {
+        return (
+            false,
+            "Status must be Pending, Approved, Rejected, or Ready for Collection."
+        );
+    }
+
+    if (validStatus == "Rejected" &&
+        string.IsNullOrWhiteSpace(dto.RejectionReason))
+    {
+        return (
+            false,
+            "Rejection reason is required."
+        );
+    }
+
+    if (validStatus == "Ready for Collection" &&
+        request.Status != "Approved")
+    {
+        return (
+            false,
+            "Only an approved certificate can be marked as ready for collection."
+        );
+    }
+
+    request.Status = validStatus;
+
+    if (validStatus == "Rejected")
+    {
+        request.RejectionReason =
+            dto.RejectionReason.Trim();
+    }
+    else
+    {
+        request.RejectionReason = string.Empty;
+    }
+
+    await _certificateRepository.UpdateAsync(request);
+
+    return (
+        true,
+        "Certificate request status updated successfully."
+    );
+}
 
     private static CertificateRequestDto MapToDto(
         CertificateRequest request

@@ -1,4 +1,3 @@
-@'
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import {
@@ -36,40 +35,55 @@ export class Navbar {
     this.currentUser?.role.toLowerCase() === 'admin';
 
   readonly navigationItems: NavigationItem[] =
-    this.isAdmin
-      ? [
-          {
-            label: 'Dashboard',
-            icon: '⌂',
-            route: '/dashboard'
-          },
-          {
-            label: 'Student Management',
-            icon: '♙',
-            route: '/admin/students'
-          },
-          {
-            label: 'Hostel Applications',
-            icon: '▦',
-            route: '/admin/hostels'
-          },
-          {
-            label: 'Lab Bookings',
-            icon: '⌘',
-            route: '/admin/labs'
-          },
-          {
-            label: 'Fee Management',
-            icon: '₨',
-            route: '/admin/fees'
-          },
-          {
-            label: 'Notifications',
-            icon: '♢',
-            route: '/notifications'
-          }
-        ]
-      : [
+  this.isAdmin
+    ? [
+        {
+          label: 'Dashboard',
+          icon: '⌂',
+          route: '/dashboard'
+        },
+        {
+          label: 'Student Management',
+          icon: '♙',
+          route: '/admin/students'
+        },
+        {
+          label: 'Hostel Management',
+          icon: '▦',
+          route: '/admin/hostels'
+        },
+        {
+          label: 'Lab Management',
+          icon: '⌘',
+          route: '/admin/labs'
+        },
+        {
+          label: 'Event Management',
+          icon: '◉',
+          route: '/admin/events'
+        },
+        {
+          label: 'Complaint Management',
+          icon: '!',
+          route: '/admin/complaints'
+        },
+        {
+          label: 'Certificate Management',
+          icon: '▤',
+          route: '/admin/certificates'
+        },
+        {
+          label: 'Fee Management',
+          icon: '₨',
+          route: '/admin/fees'
+        },
+        {
+          label: 'Notifications',
+          icon: '♢',
+          route: '/notifications'
+        }
+      ]
+    : [
           {
             label: 'My Profile',
             icon: '♙',
@@ -140,3 +154,4 @@ export class Navbar {
     this.router.navigate(['/login']);
   }
 }
+
