@@ -11,6 +11,7 @@ import {
   ComplaintItem
 } from '../../../core/models/complaint.model';
 import { ComplaintService } from '../../../core/services/complaint.service';
+import { RouterLink } from '@angular/router';
 import { Auth } from '../../../core/services/auth';
 import { Navbar } from '../../../shared/navbar/navbar';
 type ComplaintTab = 'list' | 'new';
@@ -20,7 +21,8 @@ type ComplaintTab = 'list' | 'new';
  imports: [
   CommonModule,
   FormsModule,
-  Navbar
+  Navbar,
+  RouterLink
 ],
   templateUrl: './complaint-list.html',
   styleUrl: './complaint-list.css'

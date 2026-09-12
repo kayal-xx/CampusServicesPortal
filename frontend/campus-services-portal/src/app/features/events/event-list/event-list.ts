@@ -13,6 +13,7 @@ import {
 import { EventService } from '../../../core/services/event.service';
 import { Navbar } from '../../../shared/navbar/navbar';
 import { Auth } from '../../../core/services/auth';
+import { RouterLink } from '@angular/router';
 type EventFilter = 'all' | 'upcoming' | 'past';
 
 @Component({
@@ -20,7 +21,8 @@ type EventFilter = 'all' | 'upcoming' | 'past';
   imports: [
     CommonModule,
     FormsModule,
-    Navbar
+    Navbar,
+    RouterLink
   ],
   templateUrl: './event-list.html',
   styleUrl: './event-list.css'
@@ -474,6 +476,42 @@ export class EventList implements OnInit {
         this.isCreatingEvent = false;
         this.errorMessage =
           error.error?.message ?? 'Unable to create event.';
+      }
+    });
+  }
+  deleteEvent(event: EventItem): void {
+    const confirmed = window.confirm(
+      `Are you sure you want to delete "${event.title}"?`
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    this.eventService.deleteEvent(event.id).subscribe({
+      next: () => {
+        this.events = this.events.filter(
+          item => item.id !== event.id
+        );
+
+        // this.filteredEvents = this.filteredEvents.filter(
+        //   item => item.id !== event.id
+        // );
+
+        this.successMessage = 'Event deleted successfully.';
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Delete event error:', error);
+
+        this.errorMessage =
+          error.error?.message ??
+          'Unable to delete event. Please try again.';
+
+        this.cdr.detectChanges();
       }
     });
   }
