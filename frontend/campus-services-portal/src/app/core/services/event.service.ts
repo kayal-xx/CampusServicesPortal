@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import {
+  CreateEvent,
   CreateEventRegistration,
   EventItem,
   EventRegistration
@@ -29,6 +30,12 @@ export class EventService {
       `${this.apiUrl}/events/${id}`
     );
   }
+  createEvent(event: CreateEvent): Observable<EventItem> {
+  return this.http.post<EventItem>(
+    `${this.apiUrl}/events`,
+    event
+  );
+}
 
   registerForEvent(
     registration: CreateEventRegistration
@@ -55,4 +62,27 @@ export class EventService {
       `${this.apiUrl}/event-registrations/${registrationId}?studentId=${studentId}`
     );
   }
+  getAdminRegistrations(): Observable<EventRegistration[]> {
+  return this.http.get<EventRegistration[]>(
+    `${this.apiUrl}/event-registrations/admin`
+  );
+}
+
+approveRegistration(registrationId: number): Observable<void> {
+  return this.http.put<void>(
+    `${this.apiUrl}/event-registrations/${registrationId}/approve`,
+    {}
+  );
+}
+
+rejectRegistration(
+  registrationId: number,
+  reason: string
+): Observable<void> {
+  return this.http.put<void>(
+    `${this.apiUrl}/event-registrations/${registrationId}/reject`,
+    reason
+  );
+}
+  
 }

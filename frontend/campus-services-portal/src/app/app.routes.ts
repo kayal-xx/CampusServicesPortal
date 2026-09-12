@@ -12,6 +12,7 @@ import { CertificateList } from './features/certificates/certificate-list/certif
 import { ComplaintList } from './features/complaints/complaint-list/complaint-list';
 import { Dashboard } from './features/dashboard/dashboard/dashboard';
 import { EventList } from './features/events/event-list/event-list';
+
 import { FeeList } from './features/fees/fee-list/fee-list';
 import { FeeManagement } from './features/fees/fee-management/fee-management';
 
@@ -27,6 +28,7 @@ import { StudentList } from './features/students/student-list/student-list';
 import { StudentManagement } from './features/admin/student-management/student-management';
 import { CertificateManagement } from './features/admin/certificate-management/certificate-management';
 export const routes: Routes = [
+
   {
     path: 'login',
     component: Login,
@@ -154,8 +156,9 @@ export const routes: Routes = [
     pathMatch: 'full'
   },
 
-  {
+   {
     path: '**',
     redirectTo: 'login'
   }
+
 ];

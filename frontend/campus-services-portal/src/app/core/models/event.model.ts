@@ -9,6 +9,13 @@ export interface EventItem {
   availableSeats: number;
   isFull: boolean;
 }
+export interface CreateEvent {
+  title: string;
+  description: string;
+  venue: string;
+  eventDate: string;
+  capacity: number;
+}
 
 export interface CreateEventRegistration {
   studentId: number;
@@ -23,4 +30,6 @@ export interface EventRegistration {
   venue: string;
   eventDate: string;
   registeredAt: string;
+  status: string;
+  rejectReason: string | null;
 }
