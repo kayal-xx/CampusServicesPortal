@@ -1,372 +1,320 @@
 <section class="complaint-page">
 
-  <header class="page-header">
-    <div>
-      <span class="eyebrow">ADMINISTRATION</span>
-      <h1>Complaint Management</h1>
-      <p>Review and manage student complaints.</p>
-    </div>
+    <header class="page-header">
+        <div>
+            <span class="eyebrow">ADMINISTRATION</span>
+            <h1>Complaint Management</h1>
+            <p>Review and manage student complaints.</p>
+        </div>
 
-    <button class="refresh-button" type="button" (click)="loadComplaints()">
-      ↻ Refresh
-    </button>
-  </header>
+        <button class="refresh-button" type="button" (click)="loadComplaints()">
+            ↻ Refresh
+        </button>
+    </header>
 
-  <div class="stats-grid">
+    <div class="stats-grid">
 
-    <div class="stat-card">
-      <span class="stat-label">Total Complaints</span>
-      <strong>{{ complaints.length }}</strong>
-    </div>
+        <div class="stat-card">
+            <span class="stat-label">Total Complaints</span>
+            <strong>{{ complaints.length }}</strong>
+        </div>
 
-    <div class="stat-card pending">
-      <span class="stat-label">Pending</span>
-      <strong>{{ pendingCount }}</strong>
-    </div>
+        <div class="stat-card pending">
+            <span class="stat-label">Pending</span>
+            <strong>{{ pendingCount }}</strong>
+        </div>
 
-    <div class="stat-card progress">
-      <span class="stat-label">In Progress</span>
-      <strong>{{ inProgressCount }}</strong>
-    </div>
+        <div class="stat-card progress">
+            <span class="stat-label">In Progress</span>
+            <strong>{{ inProgressCount }}</strong>
+        </div>
 
-    <div class="stat-card resolved">
-      <span class="stat-label">Resolved</span>
-      <strong>{{ resolvedCount }}</strong>
-    </div>
+        <div class="stat-card resolved">
+            <span class="stat-label">Resolved</span>
+            <strong>{{ resolvedCount }}</strong>
+        </div>
 
-    <div class="stat-card rejected">
-      <span class="stat-label">Rejected</span>
-      <strong>{{ rejectedCount }}</strong>
-    </div>
-
-  </div>
-
-  <div class="toolbar">
-
-    <div class="search-box">
-      <span>⌕</span>
-
-      <input
-        type="text"
-        [(ngModel)]="searchTerm"
-        placeholder="Search complaints..."
-      />
-    </div>
-
-    <select
-      class="status-filter"
-      [(ngModel)]="selectedStatus"
-      (change)="loadComplaints()"
-    >
-      <option value="All">All Status</option>
-      <option value="Pending">Pending</option>
-      <option value="In Progress">In Progress</option>
-      <option value="Resolved">Resolved</option>
-      <option value="Rejected">Rejected</option>
-    </select>
-
-  </div>
-
-  <div *ngIf="errorMessage" class="error-message">
-    {{ errorMessage }}
-  </div>
-
-  <div *ngIf="loading" class="loading-state">
-    <div class="spinner"></div>
-    <p>Loading complaints...</p>
-  </div>
-
-  <div
-    *ngIf="!loading && filteredComplaints.length === 0"
-    class="empty-state"
-  >
-    <div class="empty-icon">✓</div>
-
-    <h3>No complaints found</h3>
-
-    <p>
-      There are no complaints matching your current search or filter.
-    </p>
-  </div>
-
-  <div
-    *ngIf="!loading && filteredComplaints.length > 0"
-    class="table-card"
-  >
-
-    <div class="table-header">
-
-      <div>
-        <h2>Student Complaints</h2>
-        <span>{{ filteredComplaints.length }} complaints</span>
-      </div>
+        <div class="stat-card rejected">
+            <span class="stat-label">Rejected</span>
+            <strong>{{ rejectedCount }}</strong>
+        </div>
 
     </div>
 
-    <div class="table-wrapper">
+    <div class="toolbar">
 
-      <table>
+        <div class="search-box">
+            <span>⌕</span>
 
-        <thead>
-          <tr>
-            <th>Complaint ID</th>
-            <th>Student</th>
-            <th>Category</th>
-            <th>Description</th>
-            <th>Date</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
+            <input type="text" [(ngModel)]="searchTerm" placeholder="Search complaints..." />
+        </div>
 
-        <tbody>
-
-          <tr *ngFor="let complaint of filteredComplaints">
-
-            <td>
-              <span class="complaint-id">
-                CMP-{{ complaint.id.toString().padStart(4, '0') }}
-              </span>
-            </td>
-
-            <td>
-
-              <div class="student-cell">
-
-                <div class="avatar">
-                  S
-                </div>
-
-                <div>
-                  <strong>
-                    Student #{{ complaint.studentId }}
-                  </strong>
-
-                  <span>
-                    ID {{ complaint.studentId }}
-                  </span>
-                </div>
-
-              </div>
-
-            </td>
-
-            <td>
-              <span class="category-badge">
-                {{ complaint.categoryName }}
-              </span>
-            </td>
-
-            <td>
-
-              <div class="description-cell">
-                {{ complaint.description }}
-              </div>
-
-            </td>
-
-            <td>
-              {{ complaint.createdAt | date:'dd MMM yyyy' }}
-            </td>
-
-            <td>
-
-              <span
-                class="status-badge"
-                [ngClass]="getStatusClass(complaint.status)"
-              >
-                {{ complaint.status }}
-              </span>
-
-            </td>
-
-            <td>
-
-              <button
-                class="action-button"
-                type="button"
-                (click)="openUpdateModal(complaint)"
-              >
-                Update
-              </button>
-
-            </td>
-
-          </tr>
-
-        </tbody>
-
-      </table>
+        <select class="status-filter" [(ngModel)]="selectedStatus" (change)="loadComplaints()">
+            <option value="All">All Status</option>
+            <option value="Pending">Pending</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Resolved">Resolved</option>
+            <option value="Rejected">Rejected</option>
+        </select>
 
     </div>
 
-  </div>
+    <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+    </div>
+
+    <div *ngIf="loading" class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading complaints...</p>
+    </div>
+
+    <div *ngIf="!loading && filteredComplaints.length === 0" class="empty-state">
+        <div class="empty-icon">✓</div>
+
+        <h3>No complaints found</h3>
+
+        <p>
+            There are no complaints matching your current search or filter.
+        </p>
+    </div>
+
+    <div *ngIf="!loading && filteredComplaints.length > 0" class="table-card">
+
+        <div class="table-header">
+
+            <div>
+                <h2>Student Complaints</h2>
+                <span>{{ filteredComplaints.length }} complaints</span>
+            </div>
+
+        </div>
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Complaint ID</th>
+                        <th>Student</th>
+                        <th>Category</th>
+                        <th>Description</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr *ngFor="let complaint of filteredComplaints">
+
+                        <td>
+                            <span class="complaint-id">
+                                CMP-{{ complaint.id.toString().padStart(4, '0') }}
+                            </span>
+                        </td>
+
+                        <td>
+
+                            <div class="student-cell">
+
+                                <div class="avatar">
+                                    {{ complaint.studentName?.charAt(0)?.toUpperCase() || 'S' }}
+                                </div>
+
+                                <div>
+                                    <strong>
+                                        Student #{{ complaint.studentId }}
+                                    </strong>
+
+                                    <span>
+                                        ID {{ complaint.studentId }}
+                                    </span>
+                                </div>
+
+                            </div>
+
+                        </td>
+
+                        <td>
+                            <span class="category-badge">
+                                {{ complaint.categoryName }}
+                            </span>
+                        </td>
+
+                        <td>
+
+                            <div class="description-cell">
+                                {{ complaint.description }}
+                            </div>
+
+                        </td>
+
+                        <td>
+                            {{ complaint.createdAt | date:'dd MMM yyyy' }}
+                        </td>
+
+                        <td>
+
+                            <span class="status-badge" [ngClass]="getStatusClass(complaint.status)">
+                                {{ complaint.status }}
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <button class="action-button" type="button" (click)="openUpdateModal(complaint)">
+                                Update
+                            </button>
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
 
 </section>
 
 
 <!-- Update Complaint Modal -->
 
-<div
-  *ngIf="showModal && selectedComplaint"
-  class="modal-backdrop"
-  (click)="closeModal()"
->
+<div *ngIf="showModal && selectedComplaint" class="modal-backdrop" (click)="closeModal()">
 
-  <div
-    class="modal"
-    (click)="$event.stopPropagation()"
-  >
+    <div class="modal" (click)="$event.stopPropagation()">
 
-    <div class="modal-header">
+        <div class="modal-header">
 
-      <div>
-        <span class="eyebrow">COMPLAINT</span>
+            <div>
+                <span class="eyebrow">COMPLAINT</span>
 
-        <h2>
-          CMP-{{ selectedComplaint.id.toString().padStart(4, '0') }}
-        </h2>
-      </div>
+                <h2>
+                    CMP-{{ selectedComplaint.id.toString().padStart(4, '0') }}
+                </h2>
+            </div>
 
-      <button
-        class="close-button"
-        type="button"
-        (click)="closeModal()"
-      >
-        ×
-      </button>
+            <button class="close-button" type="button" (click)="closeModal()">
+                ×
+            </button>
 
-    </div>
+        </div>
 
 
-    <div class="complaint-details">
+        <div class="complaint-details">
 
-      <div class="detail-item">
+            <div class="detail-item">
 
-        <span>Student</span>
+                <span>Student</span>
 
-        <strong>
-          Student #{{ selectedComplaint.studentId }}
-        </strong>
+                <strong>
+                    {{ selectedComplaint.studentName }}
+                </strong>
 
-      </div>
-
-
-      <div class="detail-item">
-
-        <span>Category</span>
-
-        <strong>
-          {{ selectedComplaint.categoryName }}
-        </strong>
-
-      </div>
+            </div>
 
 
-      <div class="detail-item full">
+            <div class="detail-item">
 
-        <span>Description</span>
+                <span>Category</span>
 
-        <p>
-          {{ selectedComplaint.description }}
-        </p>
+                <strong>
+                    {{ selectedComplaint.categoryName }}
+                </strong>
 
-      </div>
-
-    </div>
+            </div>
 
 
-    <div class="form-group">
+            <div class="detail-item full">
 
-      <label for="complaint-status">
-        Status
-      </label>
+                <span>Description</span>
 
-      <select
-        id="complaint-status"
-        [(ngModel)]="updateStatus"
-      >
+                <p>
+                    {{ selectedComplaint.description }}
+                </p>
 
-        <option value="Pending">
-          Pending
-        </option>
+            </div>
 
-        <option value="In Progress">
-          In Progress
-        </option>
-
-        <option value="Resolved">
-          Resolved
-        </option>
-
-        <option value="Rejected">
-          Rejected
-        </option>
-
-      </select>
-
-    </div>
+        </div>
 
 
-    <div class="form-group">
+        <div class="form-group">
 
-      <label for="resolution-note">
+            <label for="complaint-status">
+                Status
+            </label>
 
-        {{ updateStatus === 'Rejected'
-          ? 'Rejection Reason'
-          : 'Resolution Note' }}
+            <select id="complaint-status" [(ngModel)]="updateStatus">
 
-        <span
-          *ngIf="
+                <option value="Pending">
+                    Pending
+                </option>
+
+                <option value="In Progress">
+                    In Progress
+                </option>
+
+                <option value="Resolved">
+                    Resolved
+                </option>
+
+                <option value="Rejected">
+                    Rejected
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="resolution-note">
+
+                {{ updateStatus === 'Rejected'
+                ? 'Rejection Reason'
+                : 'Resolution Note' }}
+
+                <span *ngIf="
             updateStatus === 'Resolved' ||
             updateStatus === 'Rejected'
-          "
-        >
-          *
-        </span>
+          ">
+                    *
+                </span>
 
-      </label>
+            </label>
 
 
-      <textarea
-        id="resolution-note"
-        [(ngModel)]="resolutionNote"
-        rows="4"
-        [placeholder]="
+            <textarea id="resolution-note" [(ngModel)]="resolutionNote" rows="4" [placeholder]="
           updateStatus === 'Rejected'
             ? 'Enter reason for rejecting this complaint...'
             : 'Enter resolution note...'
-        "
-      ></textarea>
+        "></textarea>
+
+        </div>
+
+
+        <div class="modal-footer">
+
+            <button class="cancel-button" type="button" (click)="closeModal()" [disabled]="saving">
+                Cancel
+            </button>
+
+
+            <button class="save-button" type="button" (click)="saveStatus()" [disabled]="saving">
+
+                {{ saving ? 'Saving...' : 'Save Changes' }}
+
+            </button>
+
+        </div>
 
     </div>
-
-
-    <div class="modal-footer">
-
-      <button
-        class="cancel-button"
-        type="button"
-        (click)="closeModal()"
-        [disabled]="saving"
-      >
-        Cancel
-      </button>
-
-
-      <button
-        class="save-button"
-        type="button"
-        (click)="saveStatus()"
-        [disabled]="saving"
-      >
-
-        {{ saving ? 'Saving...' : 'Save Changes' }}
-
-      </button>
-
-    </div>
-
-  </div>
 
 </div>

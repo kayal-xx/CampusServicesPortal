@@ -20,10 +20,12 @@
         </button>
 
         <div class="user-profile">
-          <div class="avatar">K</div>
+          <div class="avatar">
+            {{ currentUser?.fullName?.charAt(0)?.toUpperCase() }}
+          </div>
           <div>
-            <strong>Kavindra</strong>
-            <span>Student</span>
+            <strong>{{ currentUser?.fullName }}</strong>
+            <span>{{ currentUser?.role }}</span>
           </div>
         </div>
       </div>

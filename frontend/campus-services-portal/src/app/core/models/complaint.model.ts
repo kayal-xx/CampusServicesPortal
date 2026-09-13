@@ -1,6 +1,7 @@
 export interface ComplaintItem {
   id: number;
   studentId: number;
+  studentName: string;
   complaintCategoryId: number;
   categoryName: string;
   description: string;

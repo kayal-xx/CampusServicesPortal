@@ -8,7 +8,10 @@ import {
   ComplaintItem
 } from '../../../core/models/complaint.model';
 import { ComplaintService } from '../../../core/services/complaint.service';
-import { Auth } from '../../../core/services/auth';
+import {
+  Auth,
+  AuthResponse
+} from '../../../core/services/auth'; 
 import { Navbar } from '../../../shared/navbar/navbar';
 
 type ComplaintTab = 'list' | 'new';
@@ -43,12 +46,13 @@ export class ComplaintList implements OnInit {
   successMessage = '';
 
   studentId = 0;
+  currentUser: AuthResponse | null = null;
 
   constructor(
     private complaintService: ComplaintService,
     private changeDetectorRef: ChangeDetectorRef,
     private authService: Auth
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const currentUser = this.authService.getCurrentUser();
@@ -58,10 +62,8 @@ export class ComplaintList implements OnInit {
       return;
     }
 
+    this.currentUser = currentUser;
     this.studentId = currentUser.studentId;
-
-    this.loadComplaints();
-    this.loadCategories();
   }
 
   setTab(tab: ComplaintTab): void {
