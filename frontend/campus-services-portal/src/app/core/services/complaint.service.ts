@@ -7,7 +7,9 @@ import {
   ComplaintItem,
   CreateComplaint
 } from '../models/complaint.model';
+
 import { environment } from '../../../environments/environment';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -51,6 +53,20 @@ export class ComplaintService {
     return this.http.post<ComplaintItem>(
       `${this.apiUrl}/complaints`,
       complaint
+    );
+  }
+
+  updateComplaintStatus(
+    id: number,
+    status: 'Pending' | 'In Progress' | 'Resolved' | 'Rejected',
+    resolutionNote: string = ''
+  ): Observable<void> {
+    return this.http.put<void>(
+      `${this.apiUrl}/complaints/${id}/status`,
+      {
+        status,
+        resolutionNote
+      }
     );
   }
 }

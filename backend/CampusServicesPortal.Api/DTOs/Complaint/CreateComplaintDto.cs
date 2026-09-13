@@ -7,12 +7,10 @@ public class CreateComplaintDto
     [Range(1, int.MaxValue, ErrorMessage = "Valid student ID is required.")]
     public int StudentId { get; set; }
 
-    [Range(
-        1,
-        int.MaxValue,
-        ErrorMessage = "Valid complaint category ID is required."
-    )]
-    public int ComplaintCategoryId { get; set; }
+    public int? ComplaintCategoryId { get; set; }
+
+    [MaxLength(100)]
+    public string? CustomCategoryName { get; set; }
 
     [Required]
     [MinLength(10)]

@@ -17,6 +17,7 @@ export interface ComplaintCategory {
 
 export interface CreateComplaint {
   studentId: number;
-  complaintCategoryId: number;
+  complaintCategoryId: number | null;
+  customCategoryName?: string;
   description: string;
 }
