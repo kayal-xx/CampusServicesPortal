@@ -150,8 +150,7 @@ public class EventRepository : IEventRepository
     }
 
     // Admin - Approve registration
-    public async Task<bool>
-        ApproveRegistrationAsync(int registrationId)
+    public async Task<bool> ApproveRegistrationAsync(int registrationId)
     {
         EventRegistration? registration =
             await _context.EventRegistrations
@@ -169,7 +168,6 @@ public class EventRepository : IEventRepository
 
         return true;
     }
-
     // Admin - Reject registration with reason
     public async Task<bool>
         RejectRegistrationAsync(

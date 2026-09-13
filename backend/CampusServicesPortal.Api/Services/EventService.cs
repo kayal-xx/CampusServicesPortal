@@ -1,4 +1,5 @@
 using CampusServicesPortal.Api.DTOs.Event;
+using CampusServicesPortal.Api.DTOs.Notification;
 using CampusServicesPortal.Api.Entities;
 using CampusServicesPortal.Api.Interfaces.Repositories;
 using CampusServicesPortal.Api.Interfaces.Services;
@@ -8,10 +9,13 @@ namespace CampusServicesPortal.Api.Services;
 public class EventService : IEventService
 {
     private readonly IEventRepository _eventRepository;
+    private readonly INotificationService _notificationService;
 
-    public EventService(IEventRepository eventRepository)
+    public EventService(IEventRepository eventRepository,
+        INotificationService notificationService)
     {
         _eventRepository = eventRepository;
+        _notificationService = notificationService;
     }
 
     public async Task<List<EventDto>> GetAllAsync()
@@ -51,7 +55,13 @@ public class EventService : IEventService
         };
 
         Event createdEvent =
-            await _eventRepository.CreateAsync(eventItem);
+         await _eventRepository.CreateAsync(eventItem);
+
+        await _notificationService.CreateForAllStudentsAsync(
+            $"New event available: {createdEvent.Title}"
+        );
+
+        
 
         return await MapToEventDtoAsync(createdEvent);
     }
@@ -92,11 +102,8 @@ public class EventService : IEventService
         return await _eventRepository.DeleteAsync(id);
     }
 
-    public async Task<(
-        bool Success,
-        string Message,
-        EventRegistrationDto? Data
-    )> RegisterAsync(CreateEventRegistrationDto dto)
+    public async Task<(bool Success, string Message, EventRegistrationDto? Data)>
+     RegisterAsync(CreateEventRegistrationDto dto)
     {
         Event? eventItem =
             await _eventRepository.GetByIdAsync(dto.EventId);
@@ -153,6 +160,10 @@ public class EventService : IEventService
 
         EventRegistration createdRegistration =
             await _eventRepository.RegisterAsync(registration);
+
+        await _notificationService.CreateForAllAdminsAsync(
+            $"New event registration request from Student ID {dto.StudentId} for {eventItem.Title}"
+        );
 
         EventRegistrationDto result = new()
         {
@@ -244,8 +255,21 @@ public class EventService : IEventService
 
     // Admin - Approve registration
     public async Task<(bool Success, string Message)>
-        ApproveRegistrationAsync(int registrationId)
+     ApproveRegistrationAsync(int registrationId)
     {
+        EventRegistration? registration =
+            await _eventRepository.GetRegistrationByIdAsync(
+                registrationId
+            );
+
+        if (registration is null)
+        {
+            return (
+                false,
+                "Registration not found."
+            );
+        }
+
         bool approved =
             await _eventRepository
                 .ApproveRegistrationAsync(registrationId);
@@ -257,6 +281,18 @@ public class EventService : IEventService
                 "Registration not found."
             );
         }
+
+        string eventTitle =
+            registration.Event?.Title ?? "the event";
+
+        await _notificationService.CreateAsync(
+            new CreateNotificationDto
+            {
+                StudentId = registration.StudentId,
+                Message =
+                    $"Your event registration for {eventTitle} has been approved."
+            }
+        );
 
         return (
             true,
@@ -279,6 +315,19 @@ public class EventService : IEventService
             );
         }
 
+        EventRegistration? registration =
+            await _eventRepository.GetRegistrationByIdAsync(
+                registrationId
+            );
+
+        if (registration is null)
+        {
+            return (
+                false,
+                "Registration not found."
+            );
+        }
+
         bool rejected =
             await _eventRepository.RejectRegistrationAsync(
                 registrationId,
@@ -292,6 +341,19 @@ public class EventService : IEventService
                 "Registration not found."
             );
         }
+
+        string eventTitle =
+            registration.Event?.Title ?? "the event";
+
+        await _notificationService.CreateAsync(
+            new CreateNotificationDto
+            {
+                StudentId = registration.StudentId,
+                Message =
+                    $"Your event registration for {eventTitle} was rejected. " +
+                    $"Reason: {rejectReason.Trim()}"
+            }
+        );
 
         return (
             true,

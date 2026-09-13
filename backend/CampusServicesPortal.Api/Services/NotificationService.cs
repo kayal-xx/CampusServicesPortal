@@ -57,6 +57,40 @@ public class NotificationService : INotificationService
 
         return MapToDto(createdNotification);
     }
+    public async Task CreateForAllStudentsAsync(string message)
+    {
+        var studentIds = await _notificationRepository.GetAllStudentIdsAsync();
+
+        foreach (var studentId in studentIds)
+        {
+            var notification = new Notification
+            {
+                StudentId = studentId,
+                Message = message,
+                IsRead = false,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await _notificationRepository.CreateAsync(notification);
+        }
+    }
+    public async Task CreateForAllAdminsAsync(string message)
+    {
+        var adminIds = await _notificationRepository.GetAdminIdsAsync();
+
+        foreach (var adminId in adminIds)
+        {
+            var notification = new Notification
+            {
+                StudentId = adminId,
+                Message = message,
+                IsRead = false,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await _notificationRepository.CreateAsync(notification);
+        }
+    }
 
     public async Task<NotificationDto?> UpdateReadStatusAsync(
         int id,
