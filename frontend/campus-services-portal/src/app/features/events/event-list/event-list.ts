@@ -12,7 +12,10 @@ import {
 } from '../../../core/models/event.model';
 import { EventService } from '../../../core/services/event.service';
 import { Navbar } from '../../../shared/navbar/navbar';
-import { Auth } from '../../../core/services/auth';
+import {
+  Auth,
+  AuthResponse
+} from '../../../core/services/auth';
 import { RouterLink } from '@angular/router';
 type EventFilter = 'all' | 'upcoming' | 'past';
 
@@ -29,6 +32,7 @@ type EventFilter = 'all' | 'upcoming' | 'past';
 })
 export class EventList implements OnInit {
   isAdmin = false;
+  currentUser: AuthResponse | null = null;
   isCreateEventOpen = false;
   isCreatingEvent = false;
 
@@ -77,7 +81,7 @@ export class EventList implements OnInit {
       this.errorMessage = 'Please sign in again.';
       return;
     }
-
+    this.currentUser = currentUser;
     this.isAdmin = currentUser.role.toLowerCase() === 'admin';
 
     this.studentId = currentUser.studentId;

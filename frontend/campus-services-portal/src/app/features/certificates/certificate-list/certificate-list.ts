@@ -13,7 +13,10 @@ import {
   CertificateType
 } from '../../../core/models/certificate.model';
 import { CertificateService } from '../../../core/services/certificate.service';
-import { Auth } from '../../../core/services/auth';
+import {
+  Auth,
+  AuthResponse
+} from '../../../core/services/auth';
 import { RouterLink } from '@angular/router';
 import { Navbar } from '../../../shared/navbar/navbar';
 type CertificateTab = 'list' | 'new';
@@ -33,17 +36,17 @@ interface CertificateDraft {
 @Component({
   selector: 'app-certificate-list',
   imports: [
-  CommonModule,
-  FormsModule,
-  Navbar,
-  RouterLink
-],
+    CommonModule,
+    FormsModule,
+    Navbar,
+    RouterLink
+  ],
   templateUrl: './certificate-list.html',
   styleUrl: './certificate-list.css'
 })
 export class CertificateList implements OnInit {
   requests: CertificateRequestItem[] = [];
-
+  currentUser: AuthResponse | null = null;
   readonly certificateTypes = CERTIFICATE_TYPES;
 
   activeTab: CertificateTab = 'list';
@@ -66,22 +69,22 @@ export class CertificateList implements OnInit {
   studentId = 0;
 
   constructor(
-  private certificateService: CertificateService,
-  private changeDetectorRef: ChangeDetectorRef,
-  private authService: Auth
-) {}
+    private certificateService: CertificateService,
+    private changeDetectorRef: ChangeDetectorRef,
+    private authService: Auth
+  ) { }
 
- ngOnInit(): void {
-  const currentUser = this.authService.getCurrentUser();
+  ngOnInit(): void {
+    const currentUser = this.authService.getCurrentUser();
 
-  if (!currentUser) {
-    this.errorMessage = 'Please sign in again.';
-    return;
+    if (!currentUser) {
+      this.errorMessage = 'Please sign in again.';
+      return;
+    }
+    this.currentUser = currentUser;
+    this.studentId = currentUser.studentId;
+    this.loadRequests();
   }
-
-  this.studentId = currentUser.studentId;
-  this.loadRequests();
-}
 
   get filteredRequests(): CertificateRequestItem[] {
     if (this.activeFilter === 'all') {

@@ -1,4 +1,3 @@
-
 <div class="portal-layout">
   <app-navbar></app-navbar>
 
@@ -15,16 +14,19 @@
           <input type="text" placeholder="Search..." />
         </div>
 
-       <button class="notification-button" type="button" aria-label="Notifications" routerLink="/notifications">
+        <button class="notification-button" type="button" aria-label="Notifications" routerLink="/notifications">
           🔔
           <span class="notification-dot"></span>
         </button>
 
         <div class="user-profile">
-          <div class="avatar">K</div>
+          <div class="avatar">
+            {{ currentUser?.fullName?.charAt(0)?.toUpperCase() }}
+          </div>
+
           <div>
-            <strong>Kavindra</strong>
-            <span>Student</span>
+            <strong>{{ currentUser?.fullName }}</strong>
+            <span>{{ currentUser?.role }}</span>
           </div>
         </div>
       </div>
@@ -37,29 +39,17 @@
           <p>Request and track your university certificates.</p>
         </div>
 
-        <button
-          class="primary-button"
-          type="button"
-          (click)="setTab('new')"
-        >
+        <button class="primary-button" type="button" (click)="setTab('new')">
           + New Request
         </button>
       </div>
 
       <div class="tabs">
-        <button
-          type="button"
-          [class.active]="activeTab === 'list'"
-          (click)="setTab('list')"
-        >
+        <button type="button" [class.active]="activeTab === 'list'" (click)="setTab('list')">
           My Requests
         </button>
 
-        <button
-          type="button"
-          [class.active]="activeTab === 'new'"
-          (click)="setTab('new')"
-        >
+        <button type="button" [class.active]="activeTab === 'new'" (click)="setTab('new')">
           New Request
         </button>
       </div>
@@ -74,43 +64,24 @@
 
       <ng-container *ngIf="activeTab === 'list'">
         <div class="filter-bar">
-          <button
-            type="button"
-            [class.active]="activeFilter === 'all'"
-            (click)="setFilter('all')"
-          >
+          <button type="button" [class.active]="activeFilter === 'all'" (click)="setFilter('all')">
             All
           </button>
 
-          <button
-            type="button"
-            [class.active]="activeFilter === 'Pending'"
-            (click)="setFilter('Pending')"
-          >
+          <button type="button" [class.active]="activeFilter === 'Pending'" (click)="setFilter('Pending')">
             Pending
           </button>
 
-          <button
-            type="button"
-            [class.active]="activeFilter === 'Approved'"
-            (click)="setFilter('Approved')"
-          >
+          <button type="button" [class.active]="activeFilter === 'Approved'" (click)="setFilter('Approved')">
             Approved
           </button>
 
-          <button
-            type="button"
-            [class.active]="activeFilter === 'Ready for Collection'"
-            (click)="setFilter('Ready for Collection')"
-          >
+          <button type="button" [class.active]="activeFilter === 'Ready for Collection'"
+            (click)="setFilter('Ready for Collection')">
             Ready
           </button>
 
-          <button
-            type="button"
-            [class.active]="activeFilter === 'Rejected'"
-            (click)="setFilter('Rejected')"
-          >
+          <button type="button" [class.active]="activeFilter === 'Rejected'" (click)="setFilter('Rejected')">
             Rejected
           </button>
         </div>
@@ -120,33 +91,20 @@
           <p>Loading certificate requests...</p>
         </div>
 
-        <div
-          *ngIf="!isLoading && filteredRequests.length === 0"
-          class="empty-state"
-        >
+        <div *ngIf="!isLoading && filteredRequests.length === 0" class="empty-state">
           <div class="empty-icon">▧</div>
           <h2>No certificate requests found</h2>
           <p>
             Your submitted certificate requests will appear here.
           </p>
 
-          <button
-            class="primary-button"
-            type="button"
-            (click)="setTab('new')"
-          >
+          <button class="primary-button" type="button" (click)="setTab('new')">
             Request a Certificate
           </button>
         </div>
 
-        <div
-          *ngIf="!isLoading && filteredRequests.length > 0"
-          class="request-list"
-        >
-          <article
-            *ngFor="let request of filteredRequests"
-            class="request-card"
-          >
+        <div *ngIf="!isLoading && filteredRequests.length > 0" class="request-list">
+          <article *ngFor="let request of filteredRequests" class="request-card">
             <div class="certificate-icon">▧</div>
 
             <div class="request-information">
@@ -163,10 +121,7 @@
                   <h2>{{ request.certificateType }}</h2>
                 </div>
 
-                <span
-                  class="status-badge"
-                  [ngClass]="statusClass(request.status)"
-                >
+                <span class="status-badge" [ngClass]="statusClass(request.status)">
                   {{ request.status }}
                 </span>
               </div>
@@ -181,11 +136,7 @@
                   <strong>{{ request.copies }}</strong>
                 </div>
 
-                <button
-                  class="details-button"
-                  type="button"
-                  (click)="viewDetails(request)"
-                >
+                <button class="details-button" type="button" (click)="viewDetails(request)">
                   View Details
                 </button>
               </div>
@@ -208,10 +159,7 @@
           </div>
 
           <form (ngSubmit)="submitRequest()">
-            <div
-              *ngFor="let document of documents; let index = index"
-              class="document-section"
-            >
+            <div *ngFor="let document of documents; let index = index" class="document-section">
               <div class="document-heading">
                 <div>
                   <span class="document-number">
@@ -220,11 +168,7 @@
                   <h3>Certificate Information</h3>
                 </div>
 
-                <button
-                  class="remove-button"
-                  type="button"
-                  (click)="removeDocument(index)"
-                >
+                <button class="remove-button" type="button" (click)="removeDocument(index)">
                   Remove
                 </button>
               </div>
@@ -234,18 +178,12 @@
                   Certificate Type
                 </label>
 
-                <select
-                  [id]="'certificateType' + index"
-                  [name]="'certificateType' + index"
-                  [(ngModel)]="document.certificateType"
-                >
+                <select [id]="'certificateType' + index" [name]="'certificateType' + index"
+                  [(ngModel)]="document.certificateType">
                   <option value="">Select a certificate type</option>
 
-                  <option
-                    *ngFor="let type of certificateTypes"
-                    [ngValue]="type"
-                    [disabled]="isTypeSelected(type, index)"
-                  >
+                  <option *ngFor="let type of certificateTypes" [ngValue]="type"
+                    [disabled]="isTypeSelected(type, index)">
                     {{ type }}
                   </option>
                 </select>
@@ -256,13 +194,8 @@
                   Reason for Request
                 </label>
 
-                <textarea
-                  [id]="'reason' + index"
-                  [name]="'reason' + index"
-                  [(ngModel)]="document.reason"
-                  maxlength="500"
-                  placeholder="Explain why you need this certificate..."
-                ></textarea>
+                <textarea [id]="'reason' + index" [name]="'reason' + index" [(ngModel)]="document.reason"
+                  maxlength="500" placeholder="Explain why you need this certificate..."></textarea>
 
                 <span class="character-count">
                   {{ document.reason.length }} / 500 characters
@@ -274,25 +207,15 @@
                   Number of Copies
                 </label>
 
-                <input
-                  [id]="'copies' + index"
-                  [name]="'copies' + index"
-                  type="number"
-                  min="1"
-                  max="10"
-                  [(ngModel)]="document.copies"
-                />
+                <input [id]="'copies' + index" [name]="'copies' + index" type="number" min="1" max="10"
+                  [(ngModel)]="document.copies" />
 
                 <span>Minimum 1 and maximum 10 copies.</span>
               </div>
             </div>
 
-            <button
-              class="add-certificate-button"
-              type="button"
-              [disabled]="documents.length >= certificateTypes.length"
-              (click)="addDocument()"
-            >
+            <button class="add-certificate-button" type="button"
+              [disabled]="documents.length >= certificateTypes.length" (click)="addDocument()">
               + Add Another Certificate
             </button>
 
@@ -306,23 +229,15 @@
             </div>
 
             <div class="form-actions">
-              <button
-                class="cancel-button"
-                type="button"
-                (click)="setTab('list')"
-              >
+              <button class="cancel-button" type="button" (click)="setTab('list')">
                 Cancel
               </button>
 
-              <button
-                class="primary-button"
-                type="submit"
-                [disabled]="isSubmitting"
-              >
+              <button class="primary-button" type="submit" [disabled]="isSubmitting">
                 {{
-                  isSubmitting
-                    ? 'Submitting...'
-                    : 'Submit Request'
+                isSubmitting
+                ? 'Submitting...'
+                : 'Submit Request'
                 }}
               </button>
             </div>
@@ -333,15 +248,8 @@
   </main>
 </div>
 
-<div
-  *ngIf="selectedRequest"
-  class="modal-backdrop"
-  (click)="closeDetails()"
->
-  <section
-    class="details-modal"
-    (click)="$event.stopPropagation()"
-  >
+<div *ngIf="selectedRequest" class="modal-backdrop" (click)="closeDetails()">
+  <section class="details-modal" (click)="$event.stopPropagation()">
     <div class="modal-header">
       <div class="modal-title">
         <div class="modal-icon">▧</div>
@@ -353,18 +261,11 @@
       </div>
 
       <div class="modal-header-actions">
-        <span
-          class="status-badge"
-          [ngClass]="statusClass(selectedRequest.status)"
-        >
+        <span class="status-badge" [ngClass]="statusClass(selectedRequest.status)">
           {{ selectedRequest.status }}
         </span>
 
-        <button
-          class="close-icon-button"
-          type="button"
-          (click)="closeDetails()"
-        >
+        <button class="close-icon-button" type="button" (click)="closeDetails()">
           ×
         </button>
       </div>
@@ -402,10 +303,7 @@
         <p>{{ selectedRequest.reason }}</p>
       </div>
 
-      <div
-        *ngIf="selectedRequest.status === 'Ready for Collection'"
-        class="collection-box"
-      >
+      <div *ngIf="selectedRequest.status === 'Ready for Collection'" class="collection-box">
         <strong>Ready for Collection</strong>
         <p>
           Your certificate is ready. Please collect it from the
@@ -415,11 +313,7 @@
     </div>
 
     <div class="modal-footer">
-      <button
-        class="cancel-button"
-        type="button"
-        (click)="closeDetails()"
-      >
+      <button class="cancel-button" type="button" (click)="closeDetails()">
         Close
       </button>
     </div>
