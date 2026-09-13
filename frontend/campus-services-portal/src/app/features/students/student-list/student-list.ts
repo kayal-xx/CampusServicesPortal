@@ -12,14 +12,18 @@ import {
 } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { StudentProfile } from '../../../core/models/student.model';
+
+import { RouterLink } from '@angular/router';
 import { StudentService } from '../../../core/services/student';
 import { Navbar } from '../../../shared/navbar/navbar';
+import ro from '@angular/common/locales/extra/ro';
 @Component({
   selector: 'app-student-list',
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    Navbar
+    Navbar,
+    RouterLink
   ],
   templateUrl: './student-list.html',
   styleUrl: './student-list.css'
