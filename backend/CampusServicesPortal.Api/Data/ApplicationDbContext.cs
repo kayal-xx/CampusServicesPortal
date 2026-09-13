@@ -23,5 +23,5 @@ public class ApplicationDbContext : DbContext
     public DbSet<CertificateRequest> CertificateRequests => Set<CertificateRequest>();
     public DbSet<FeePayment> FeePayments => Set<FeePayment>();
     public DbSet<Notification> Notifications => Set<Notification>();
-    public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
+    public DbSet<PasswordResetToken> PasswordResetTokens => Set<PasswordResetToken>();  
 }

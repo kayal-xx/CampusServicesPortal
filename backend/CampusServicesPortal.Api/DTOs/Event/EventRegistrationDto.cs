@@ -11,6 +11,8 @@ public class EventRegistrationDto
     public string Venue { get; set; } = string.Empty;
     public DateTime EventDate { get; set; }
     public DateTime RegisteredAt { get; set; }
+    public string Status { get; set; } = "Pending";
+    public string? RejectReason { get; set; }
 }
 
 public class CreateEventRegistrationDto

@@ -13,21 +13,41 @@ import {
 import { EventService } from '../../../core/services/event.service';
 import { Navbar } from '../../../shared/navbar/navbar';
 import { Auth } from '../../../core/services/auth';
+import { RouterLink } from '@angular/router';
 type EventFilter = 'all' | 'upcoming' | 'past';
 
 @Component({
   selector: 'app-event-list',
- imports: [
-  CommonModule,
-  FormsModule,
-  Navbar
-],
+  imports: [
+    CommonModule,
+    FormsModule,
+    Navbar,
+    RouterLink
+  ],
   templateUrl: './event-list.html',
   styleUrl: './event-list.css'
 })
 export class EventList implements OnInit {
+  isAdmin = false;
+  isCreateEventOpen = false;
+  isCreatingEvent = false;
+
+  newEvent = {
+    title: '',
+    description: '',
+    venue: '',
+    eventDate: '',
+    capacity: 0
+  };
   events: EventItem[] = [];
   registrations: EventRegistration[] = [];
+
+  adminRegistrations: EventRegistration[] = [];
+  selectedParticipantsEvent: EventItem | null = null;
+  isRejectModalOpen = false;
+  rejectRegistrationId: number | null = null;
+  rejectReason = '';
+  isProcessingRegistrationId: number | null = null;
 
   searchText = '';
   activeFilter: EventFilter = 'all';
@@ -44,25 +64,32 @@ export class EventList implements OnInit {
   // Replace this value with the authenticated student's ID later.
   studentId = 0;
 
- constructor(
-  private eventService: EventService,
-  private cdr: ChangeDetectorRef,
-  private authService: Auth
-) {}
+  constructor(
+    private eventService: EventService,
+    private cdr: ChangeDetectorRef,
+    private authService: Auth
+  ) { }
 
   ngOnInit(): void {
-  const currentUser = this.authService.getCurrentUser();
+    const currentUser = this.authService.getCurrentUser();
 
-  if (!currentUser) {
-    this.errorMessage = 'Please sign in again.';
-    return;
+    if (!currentUser) {
+      this.errorMessage = 'Please sign in again.';
+      return;
+    }
+
+    this.isAdmin = currentUser.role.toLowerCase() === 'admin';
+
+    this.studentId = currentUser.studentId;
+
+    this.loadEvents();
+
+    if (this.isAdmin) {
+      this.loadAdminRegistrations();
+    } else {
+      this.loadStudentRegistrations();
+    }
   }
-
-  this.studentId = currentUser.studentId;
-
-  this.loadEvents();
-  this.loadStudentRegistrations();
-}
 
   get filteredEvents(): EventItem[] {
     const search = this.searchText.trim().toLowerCase();
@@ -126,6 +153,131 @@ export class EventList implements OnInit {
           this.cdr.detectChanges();
         }
       });
+  }
+  loadAdminRegistrations(): void {
+    this.eventService.getAdminRegistrations().subscribe({
+      next: (registrations) => {
+        this.adminRegistrations = registrations;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Admin registration loading error:', error);
+
+        this.adminRegistrations = [];
+        this.errorMessage =
+          'Unable to load event registrations.';
+
+        this.cdr.detectChanges();
+      }
+    });
+  }
+  openParticipants(event: EventItem): void {
+    this.selectedParticipantsEvent = event;
+  }
+
+  closeParticipants(): void {
+    this.selectedParticipantsEvent = null;
+  }
+
+  getEventRegistrations(eventId: number): EventRegistration[] {
+    return this.adminRegistrations.filter(
+      registration => registration.eventId === eventId
+    );
+  }
+
+  approveRegistration(registrationId: number): void {
+    this.isProcessingRegistrationId = registrationId;
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    this.eventService.approveRegistration(registrationId).subscribe({
+      next: () => {
+        const registration = this.adminRegistrations.find(
+          item => item.id === registrationId
+        );
+
+        if (registration) {
+          registration.status = 'Approved';
+          registration.rejectReason = null;
+        }
+
+        this.successMessage = 'Registration approved successfully.';
+        this.isProcessingRegistrationId = null;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Approval error:', error);
+
+        this.errorMessage =
+          error.error?.message ??
+          'Unable to approve registration.';
+
+        this.isProcessingRegistrationId = null;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  openRejectModal(registrationId: number): void {
+    this.rejectRegistrationId = registrationId;
+    this.rejectReason = '';
+    this.isRejectModalOpen = true;
+  }
+
+  closeRejectModal(): void {
+    this.isRejectModalOpen = false;
+    this.rejectRegistrationId = null;
+    this.rejectReason = '';
+  }
+
+  rejectRegistration(): void {
+    if (
+      this.rejectRegistrationId === null ||
+      !this.rejectReason.trim()
+    ) {
+      this.errorMessage = 'Reject reason is required.';
+      return;
+    }
+
+    this.isProcessingRegistrationId =
+      this.rejectRegistrationId;
+
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    this.eventService.rejectRegistration(
+      this.rejectRegistrationId,
+      this.rejectReason.trim()
+    ).subscribe({
+      next: () => {
+        const registration = this.adminRegistrations.find(
+          item => item.id === this.rejectRegistrationId
+        );
+
+        if (registration) {
+          registration.status = 'Rejected';
+          registration.rejectReason =
+            this.rejectReason.trim();
+        }
+
+        this.successMessage =
+          'Registration rejected successfully.';
+
+        this.isProcessingRegistrationId = null;
+        this.closeRejectModal();
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Rejection error:', error);
+
+        this.errorMessage =
+          error.error?.message ??
+          'Unable to reject registration.';
+
+        this.isProcessingRegistrationId = null;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   setFilter(filter: EventFilter): void {
@@ -272,5 +424,95 @@ export class EventList implements OnInit {
     ];
 
     return imageClasses[index % imageClasses.length];
+  }
+  openCreateEvent(): void {
+    this.isCreateEventOpen = true;
+    this.errorMessage = '';
+    this.successMessage = '';
+  }
+
+  closeCreateEvent(): void {
+    this.isCreateEventOpen = false;
+
+    this.newEvent = {
+      title: '',
+      description: '',
+      venue: '',
+      eventDate: '',
+      capacity: 0
+    };
+  }
+
+  createEvent(): void {
+    if (
+      !this.newEvent.title.trim() ||
+      !this.newEvent.description.trim() ||
+      !this.newEvent.venue.trim() ||
+      !this.newEvent.eventDate ||
+      this.newEvent.capacity <= 0
+    ) {
+      this.errorMessage = 'Please fill all event details correctly.';
+      return;
+    }
+
+    this.isCreatingEvent = true;
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    this.eventService.createEvent({
+      title: this.newEvent.title.trim(),
+      description: this.newEvent.description.trim(),
+      venue: this.newEvent.venue.trim(),
+      eventDate: this.newEvent.eventDate,
+      capacity: this.newEvent.capacity
+    }).subscribe({
+      next: () => {
+        this.isCreatingEvent = false;
+        this.closeCreateEvent();
+        this.successMessage = 'Event created successfully.';
+        this.loadEvents();
+      },
+      error: (error) => {
+        this.isCreatingEvent = false;
+        this.errorMessage =
+          error.error?.message ?? 'Unable to create event.';
+      }
+    });
+  }
+  deleteEvent(event: EventItem): void {
+    const confirmed = window.confirm(
+      `Are you sure you want to delete "${event.title}"?`
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    this.eventService.deleteEvent(event.id).subscribe({
+      next: () => {
+        this.events = this.events.filter(
+          item => item.id !== event.id
+        );
+
+        // this.filteredEvents = this.filteredEvents.filter(
+        //   item => item.id !== event.id
+        // );
+
+        this.successMessage = 'Event deleted successfully.';
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Delete event error:', error);
+
+        this.errorMessage =
+          error.error?.message ??
+          'Unable to delete event. Please try again.';
+
+        this.cdr.detectChanges();
+      }
+    });
   }
 }

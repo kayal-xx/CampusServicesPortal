@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 
 import {
   ComplaintCategory,
@@ -18,7 +19,8 @@ type ComplaintTab = 'list' | 'new';
   imports: [
     CommonModule,
     FormsModule,
-    Navbar
+    Navbar,
+    RouterLink
   ],
   templateUrl: './complaint-list.html',
   styleUrl: './complaint-list.css'
@@ -115,8 +117,6 @@ export class ComplaintList implements OnInit {
   onCategoryChange(): void {
     this.errorMessage = '';
 
-    // If a normal category is selected,
-    // clear the custom category field.
     if (!this.isCustomCategory()) {
       this.customCategoryName = '';
     }
@@ -128,15 +128,15 @@ export class ComplaintList implements OnInit {
 
   submitComplaint(): void {
     const trimmedDescription = this.description.trim();
-    const trimmedCustomCategory = this.customCategoryName.trim();
+    const trimmedCustomCategory =
+      this.customCategoryName.trim();
 
-    // Validate category
     if (this.selectedCategoryId === null) {
-      this.errorMessage = 'Please select a complaint category.';
+      this.errorMessage =
+        'Please select a complaint category.';
       return;
     }
 
-    // Validate custom category
     if (
       this.isCustomCategory() &&
       trimmedCustomCategory.length < 3
@@ -146,7 +146,6 @@ export class ComplaintList implements OnInit {
       return;
     }
 
-    // Validate description
     if (trimmedDescription.length < 10) {
       this.errorMessage =
         'Complaint description must contain at least 10 characters.';
@@ -186,6 +185,7 @@ export class ComplaintList implements OnInit {
 
           this.isSubmitting = false;
           this.activeTab = 'list';
+
           this.successMessage =
             'Complaint submitted successfully.';
 

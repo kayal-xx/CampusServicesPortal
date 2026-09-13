@@ -996,4 +996,652 @@ input {
   .modal-actions button {
     width: 100%;
   }
+
+.rejection-message {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.rejection-message strong {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+/* Create Event */
+
+.page-heading-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.create-event-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 8px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #1d4ba8, #2866d3);
+  box-shadow: 0 5px 14px rgba(29, 75, 168, 0.22);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.create-event-button span {
+  display: grid;
+  width: 20px;
+  height: 20px;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  font-size: 17px;
+  line-height: 1;
+}
+
+.create-event-button:hover {
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, #163b87, #1d4ba8);
+  box-shadow: 0 8px 18px rgba(29, 75, 168, 0.28);
+}
+
+
+/* Create Event Modal */
+
+.create-event-modal {
+  width: min(680px, 100%);
+}
+
+.create-event-modal .modal-content {
+  padding: 30px;
+}
+
+.create-event-modal .modal-content h2 {
+  margin-bottom: 6px;
+  font-size: 24px;
+}
+
+.create-event-subtitle {
+  margin: 0 0 25px;
+  color: #7a879c;
+  font-size: 13px;
+}
+
+
+/* Form */
+
+.create-event-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.form-group label {
+  color: #263551;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 11px 13px;
+  border: 1px solid #d9e1ec;
+  border-radius: 8px;
+  outline: none;
+  color: #263551;
+  background: #f9fbfe;
+  font-size: 13px;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.form-group input {
+  min-height: 44px;
+}
+
+.form-group textarea {
+  min-height: 105px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #a2adbd;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #1d4ba8;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(29, 75, 168, 0.09);
+}
+
+
+/* Date + Capacity */
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 16px;
+}
+
+
+/* Create Modal Buttons */
+
+.create-event-modal .modal-actions {
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid #edf0f5;
+}
+
+.create-event-modal .modal-register-button {
+  min-width: 125px;
+}
+
+
+/* Mobile */
+
+@media (max-width: 650px) {
+  .page-heading-actions {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .create-event-button {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .create-event-modal .modal-content {
+    padding: 24px 18px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+}
+
+}/* ============================= */
+/* CREATE EVENT UI */
+/* ============================= */
+
+.page-heading-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.create-event-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 17px;
+  border: none;
+  border-radius: 9px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #1d4ba8, #2866d3);
+  box-shadow: 0 6px 16px rgba(29, 75, 168, 0.22);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.create-event-button span {
+  display: flex;
+  width: 22px;
+  height: 22px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.18);
+  font-size: 18px;
+  line-height: 1;
+}
+
+.create-event-button:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #163b87, #1d4ba8);
+  box-shadow: 0 9px 20px rgba(29, 75, 168, 0.28);
+}
+
+
+/* Create Event Modal */
+
+.create-event-modal {
+  width: min(680px, 100%);
+}
+
+.create-event-modal .modal-content {
+  padding: 32px;
+}
+
+.create-event-modal .modal-content h2 {
+  margin: 0 0 6px;
+  color: #15223d;
+  font-size: 25px;
+}
+
+.create-event-subtitle {
+  margin: 0 0 28px;
+  color: #7a879c;
+  font-size: 13px;
+}
+
+
+/* Form */
+
+.create-event-form {
+  display: flex;
+  flex-direction: column;
+  gap: 19px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  color: #263551;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  border: 1px solid #d9e1ec;
+  border-radius: 9px;
+  outline: none;
+  color: #263551;
+  background: #f9fbfe;
+  font-family: inherit;
+  font-size: 13px;
+  transition: 0.2s ease;
+}
+
+.form-group input {
+  height: 44px;
+  padding: 0 13px;
+}
+
+.form-group textarea {
+  min-height: 105px;
+  padding: 12px 13px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #a2adbd;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #1d4ba8;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(29, 75, 168, 0.08);
+}
+
+
+/* Date + Capacity */
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 16px;
+}
+
+
+/* Buttons */
+
+.create-event-modal .modal-actions {
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid #edf0f5;
+}
+
+.create-event-modal .modal-secondary-button,
+.create-event-modal .modal-register-button {
+  min-height: 42px;
+  padding: 0 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.create-event-modal .modal-register-button {
+  min-width: 130px;
+}
+
+
+/* Mobile */
+
+@media (max-width: 650px) {
+
+  .page-heading-actions {
+    width: 100%;
+    align-items: stretch;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .create-event-button {
+    width: 100%;
+  }
+
+  .create-event-modal .modal-content {
+    padding: 24px 18px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  
+
+}
+
+/* ============================= */
+/* ADMIN EVENT MANAGEMENT */
+/* ============================= */
+
+.admin-events-section {
+  margin-top: 24px;
+}
+
+.admin-section-header {
+  margin-bottom: 18px;
+}
+
+.admin-section-header h2 {
+  margin: 0 0 5px;
+  color: #15223d;
+  font-size: 20px;
+}
+
+.admin-section-header p {
+  margin: 0;
+  color: #7a879c;
+  font-size: 13px;
+}
+
+.admin-event-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.admin-event-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px;
+  border: 1px solid #e4e9f1;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 3px 12px rgba(30, 50, 80, 0.06);
+}
+
+.admin-event-info {
+  flex: 1;
+}
+
+.admin-event-info h3 {
+  margin: 0 0 7px;
+  color: #17233d;
+  font-size: 17px;
+}
+
+.admin-event-info p {
+  margin: 0 0 13px;
+  color: #68758a;
+  font-size: 13px;
+}
+
+.admin-event-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  color: #58667c;
+  font-size: 12px;
+}
+
+.admin-event-actions {
+  flex-shrink: 0;
+}
+
+.view-participants-button {
+  border: none;
+  border-radius: 8px;
+  padding: 10px 15px;
+  color: #ffffff;
+  background: #1d4ba8;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.view-participants-button:hover {
+  background: #163b87;
+}
+
+
+/* ============================= */
+/* PARTICIPANTS MODAL */
+/* ============================= */
+
+.participants-modal {
+  width: min(720px, 100%);
+}
+
+.participants-subtitle {
+  margin: 0 0 20px;
+  color: #7a879c;
+  font-size: 13px;
+}
+
+.participant-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 15px;
+  margin-bottom: 10px;
+  border: 1px solid #e5eaf1;
+  border-radius: 9px;
+  background: #f9fbfe;
+}
+
+.participant-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.participant-info strong {
+  color: #263551;
+  font-size: 13px;
+}
+
+.participant-info span {
+  color: #7a879c;
+  font-size: 11px;
+}
+
+.participant-reason {
+  color: #c0392b !important;
+}
+
+.participant-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.participant-status {
+  padding: 5px 9px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.participant-status.pending {
+  color: #9a6700;
+  background: #fff4cc;
+}
+
+.participant-status.approved {
+  color: #167344;
+  background: #dcfce7;
+}
+
+.participant-status.rejected {
+  color: #b42318;
+  background: #fee2e2;
+}
+
+.approve-button,
+.reject-button {
+  border: none;
+  border-radius: 7px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.approve-button {
+  color: #ffffff;
+  background: #16834b;
+}
+
+.reject-button {
+  color: #ffffff;
+  background: #c0392b;
+}
+
+.approve-button:disabled,
+.reject-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.no-participants {
+  padding: 30px;
+  text-align: center;
+  color: #7a879c;
+  font-size: 13px;
+}
+
+
+/* ============================= */
+/* REJECT MODAL */
+/* ============================= */
+
+.reject-modal {
+  width: min(520px, 100%);
+}
+
+.reject-subtitle {
+  margin: 0 0 20px;
+  color: #7a879c;
+  font-size: 13px;
+}
+
+.reject-confirm-button {
+  border: none;
+  border-radius: 8px;
+  padding: 10px 17px;
+  color: #ffffff;
+  background: #c0392b;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.reject-confirm-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+/* ============================= */
+/* MOBILE */
+/* ============================= */
+
+@media (max-width: 700px) {
+
+  .admin-event-card {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .admin-event-actions {
+    width: 100%;
+  }
+
+  .view-participants-button {
+    width: 100%;
+  }
+
+  .participant-card {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .participant-actions {
+    justify-content: flex-start;
+  }
+}
+.delete-event-button {
+  border: none;
+  border-radius: 7px;
+  padding: 10px 15px;
+  color: #ffffff;
+  background: #c0392b;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  margin-left: 8px;
+}
+
+.delete-event-button:hover {
+  background: #a93226;
+}
+
+.delete-event-button:active {
+  transform: scale(0.98);
 }

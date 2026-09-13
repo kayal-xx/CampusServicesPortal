@@ -14,6 +14,7 @@ import {
 } from '../../../core/models/certificate.model';
 import { CertificateService } from '../../../core/services/certificate.service';
 import { Auth } from '../../../core/services/auth';
+import { RouterLink } from '@angular/router';
 import { Navbar } from '../../../shared/navbar/navbar';
 type CertificateTab = 'list' | 'new';
 type CertificateFilter =
@@ -34,7 +35,8 @@ interface CertificateDraft {
   imports: [
   CommonModule,
   FormsModule,
-  Navbar
+  Navbar,
+  RouterLink
 ],
   templateUrl: './certificate-list.html',
   styleUrl: './certificate-list.css'

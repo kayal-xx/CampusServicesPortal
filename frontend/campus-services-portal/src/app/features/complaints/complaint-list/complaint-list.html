@@ -14,8 +14,13 @@
           <input type="text" placeholder="Search..." />
         </div>
 
-        <button class="notification-button" type="button">
-          ♧
+        <button
+          class="notification-button"
+          type="button"
+          aria-label="Notifications"
+          routerLink="/notifications"
+        >
+          🔔
           <span class="notification-dot"></span>
         </button>
 
@@ -36,63 +41,104 @@
           <p>Submit complaints and track their current status.</p>
         </div>
 
-        <button class="primary-button" type="button" (click)="setTab('new')">
+        <button
+          class="primary-button"
+          type="button"
+          (click)="setTab('new')"
+        >
           + Submit New
         </button>
       </div>
 
       <div class="tabs">
-        <button type="button" [class.active]="activeTab === 'list'" (click)="setTab('list')">
+        <button
+          type="button"
+          [class.active]="activeTab === 'list'"
+          (click)="setTab('list')"
+        >
           My Complaints
         </button>
 
-        <button type="button" [class.active]="activeTab === 'new'" (click)="setTab('new')">
+        <button
+          type="button"
+          [class.active]="activeTab === 'new'"
+          (click)="setTab('new')"
+        >
           New Complaint
         </button>
       </div>
 
-      <div *ngIf="successMessage" class="message success-message">
+      <div
+        *ngIf="successMessage"
+        class="message success-message"
+      >
         ✓ {{ successMessage }}
       </div>
 
-      <div *ngIf="errorMessage" class="message error-message">
+      <div
+        *ngIf="errorMessage"
+        class="message error-message"
+      >
         ⚠ {{ errorMessage }}
       </div>
 
       <ng-container *ngIf="activeTab === 'list'">
-        <div *ngIf="isLoading" class="loading-state">
+        <div
+          *ngIf="isLoading"
+          class="loading-state"
+        >
           <div class="spinner"></div>
           <p>Loading complaints...</p>
         </div>
 
-        <div *ngIf="!isLoading && complaints.length === 0" class="empty-state">
+        <div
+          *ngIf="!isLoading && complaints.length === 0"
+          class="empty-state"
+        >
           <div class="empty-icon">△</div>
           <h2>No complaints submitted</h2>
           <p>Your submitted complaints will appear here.</p>
 
-          <button class="primary-button" type="button" (click)="setTab('new')">
+          <button
+            class="primary-button"
+            type="button"
+            (click)="setTab('new')"
+          >
             Submit a Complaint
           </button>
         </div>
 
-        <div *ngIf="!isLoading && complaints.length > 0" class="complaints-list">
-          <article *ngFor="let complaint of complaints" class="complaint-card">
+        <div
+          *ngIf="!isLoading && complaints.length > 0"
+          class="complaints-list"
+        >
+          <article
+            *ngFor="let complaint of complaints"
+            class="complaint-card"
+          >
             <div class="complaint-card-header">
               <div class="complaint-title">
                 <div class="warning-icon">△</div>
 
                 <div>
                   <div class="complaint-reference">
-                    <span>CMP-{{ complaint.id | number:'4.0-0' }}</span>
+                    <span>
+                      CMP-{{ complaint.id | number:'4.0-0' }}
+                    </span>
                     <span>•</span>
-                    <span>{{ complaint.createdAt | date:'yyyy-MM-dd' }}</span>
+                    <span>
+                      {{ complaint.createdAt | date:'yyyy-MM-dd' }}
+                    </span>
                   </div>
 
                   <h2>{{ complaint.categoryName }}</h2>
                 </div>
               </div>
 
-              <span class="status-badge" [ngClass]="getStatusClass(complaint.status)">
+              <span
+                class="status-badge"
+                [ngClass]="getStatusClass(complaint.status)"
+              >
                 {{ complaint.status }}
               </span>
             </div>
@@ -101,21 +147,32 @@
               {{ complaint.description }}
             </p>
 
-            <div *ngIf="complaint.resolutionNote" class="resolution-note">
+            <div
+              *ngIf="complaint.resolutionNote"
+              class="resolution-note"
+            >
               <strong>Resolution Note</strong>
               <p>{{ complaint.resolutionNote }}</p>
             </div>
 
-            <button class="details-button" type="button" (click)="openDetails(complaint)">
+            <button
+              class="details-button"
+              type="button"
+              (click)="openDetails(complaint)"
+            >
               View Details
             </button>
           </article>
         </div>
       </ng-container>
 
-      <div *ngIf="activeTab === 'new'" class="complaint-form-card">
+      <div
+        *ngIf="activeTab === 'new'"
+        class="complaint-form-card"
+      >
         <div class="form-heading">
           <div class="form-icon">△</div>
+
           <div>
             <h2>Submit a New Complaint</h2>
             <p>Provide clear information about the issue.</p>
@@ -124,15 +181,28 @@
 
         <form (ngSubmit)="submitComplaint()">
           <div class="form-group">
-            <label for="category">Complaint Category</label>
+            <label for="category">
+              Complaint Category
+            </label>
 
-            <select id="category" name="category" [(ngModel)]="selectedCategoryId" (ngModelChange)="onCategoryChange()"
-              required>
-              <option [ngValue]="null" disabled>
+            <select
+              id="category"
+              name="category"
+              [(ngModel)]="selectedCategoryId"
+              (ngModelChange)="onCategoryChange()"
+              required
+            >
+              <option
+                [ngValue]="null"
+                disabled
+              >
                 Select a category
               </option>
 
-              <option *ngFor="let category of categories" [ngValue]="category.id">
+              <option
+                *ngFor="let category of categories"
+                [ngValue]="category.id"
+              >
                 {{ category.name }}
               </option>
 
@@ -142,24 +212,44 @@
             </select>
           </div>
 
-          <div class="form-group" *ngIf="isCustomCategory()">
+          <div
+            class="form-group"
+            *ngIf="isCustomCategory()"
+          >
             <label for="customCategory">
               Enter Complaint Category
             </label>
 
-            <input id="customCategory" name="customCategoryName" type="text" [(ngModel)]="customCategoryName"
-              maxlength="100" placeholder="Enter your complaint category" required />
+            <input
+              id="customCategory"
+              name="customCategoryName"
+              type="text"
+              [(ngModel)]="customCategoryName"
+              maxlength="100"
+              placeholder="Enter your complaint category"
+              required
+            />
 
             <small>
-              Example: Transport Issue, Wi-Fi Problem, Cafeteria Issue
+              Example: Transport Issue, Wi-Fi Problem,
+              Cafeteria Issue
             </small>
           </div>
 
           <div class="form-group">
-            <label for="description">Complaint Description</label>
+            <label for="description">
+              Complaint Description
+            </label>
 
-            <textarea id="description" name="description" [(ngModel)]="description" rows="7" maxlength="2000"
-              placeholder="Describe the issue in detail..." required></textarea>
+            <textarea
+              id="description"
+              name="description"
+              [(ngModel)]="description"
+              rows="7"
+              maxlength="2000"
+              placeholder="Describe the issue in detail..."
+              required
+            ></textarea>
 
             <div class="character-count">
               {{ description.length }} / 2000 characters
@@ -168,19 +258,34 @@
 
           <div class="form-notice">
             <span>ⓘ</span>
+
             <p>
-              Your complaint will be reviewed by the relevant university
-              department. You can track its status from this page.
+              Your complaint will be reviewed by the relevant
+              university department. You can track its status
+              from this page.
             </p>
           </div>
 
           <div class="form-actions">
-            <button class="secondary-button" type="button" [disabled]="isSubmitting" (click)="setTab('list')">
+            <button
+              class="secondary-button"
+              type="button"
+              [disabled]="isSubmitting"
+              (click)="setTab('list')"
+            >
               Cancel
             </button>
 
-            <button class="primary-button" type="submit" [disabled]="isSubmitting">
-              {{ isSubmitting ? 'Submitting...' : 'Submit Complaint' }}
+            <button
+              class="primary-button"
+              type="submit"
+              [disabled]="isSubmitting"
+            >
+              {{
+                isSubmitting
+                  ? 'Submitting...'
+                  : 'Submit Complaint'
+              }}
             </button>
           </div>
         </form>
@@ -189,9 +294,23 @@
   </main>
 </div>
 
-<div *ngIf="selectedComplaint" class="modal-overlay" (click)="closeDetails()">
-  <section class="complaint-modal" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
-    <button class="modal-close" type="button" aria-label="Close complaint details" (click)="closeDetails()">
+<div
+  *ngIf="selectedComplaint"
+  class="modal-overlay"
+  (click)="closeDetails()"
+>
+  <section
+    class="complaint-modal"
+    role="dialog"
+    aria-modal="true"
+    (click)="$event.stopPropagation()"
+  >
+    <button
+      class="modal-close"
+      type="button"
+      aria-label="Close complaint details"
+      (click)="closeDetails()"
+    >
       ×
     </button>
 
@@ -202,10 +321,14 @@
         <span class="modal-reference">
           CMP-{{ selectedComplaint.id | number:'4.0-0' }}
         </span>
+
         <h2>{{ selectedComplaint.categoryName }}</h2>
       </div>
 
-      <span class="status-badge" [ngClass]="getStatusClass(selectedComplaint.status)">
+      <span
+        class="status-badge"
+        [ngClass]="getStatusClass(selectedComplaint.status)"
+      >
         {{ selectedComplaint.status }}
       </span>
     </div>
@@ -214,6 +337,7 @@
       <div class="detail-grid">
         <div class="detail-item">
           <span>Submitted Date</span>
+
           <strong>
             {{ selectedComplaint.createdAt | date:'MMMM d, y' }}
           </strong>
@@ -221,6 +345,7 @@
 
         <div class="detail-item">
           <span>Complaint ID</span>
+
           <strong>
             CMP-{{ selectedComplaint.id | number:'4.0-0' }}
           </strong>
@@ -232,14 +357,21 @@
         <p>{{ selectedComplaint.description }}</p>
       </div>
 
-      <div *ngIf="selectedComplaint.resolutionNote" class="resolution-note modal-resolution">
+      <div
+        *ngIf="selectedComplaint.resolutionNote"
+        class="resolution-note modal-resolution"
+      >
         <strong>Resolution Note</strong>
         <p>{{ selectedComplaint.resolutionNote }}</p>
       </div>
     </div>
 
     <div class="modal-actions">
-      <button class="secondary-button" type="button" (click)="closeDetails()">
+      <button
+        class="secondary-button"
+        type="button"
+        (click)="closeDetails()"
+      >
         Close
       </button>
     </div>
