@@ -17,6 +17,8 @@ import {
 } from '../../../core/models/hostel.model';
 import { HostelService } from '../../../core/services/hostel';
 import { Navbar } from '../../../shared/navbar/navbar';
+import { RouterLink } from '@angular/router';
+
 
 type HostelTab = 'hostels' | 'apply' | 'applications';
 
@@ -25,7 +27,8 @@ type HostelTab = 'hostels' | 'apply' | 'applications';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    Navbar
+    Navbar,
+    RouterLink
   ],
   templateUrl: './hostel-list.html',
   styleUrl: './hostel-list.css'
