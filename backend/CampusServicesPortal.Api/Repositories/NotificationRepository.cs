@@ -43,6 +43,22 @@ public class NotificationRepository : INotificationRepository
         await _context.SaveChangesAsync();
         return notification;
     }
+    public async Task<List<int>> GetAllStudentIdsAsync()
+    {
+        return await _context.Students
+            .AsNoTracking()
+            .Where(x => x.Role == "Student" && x.IsActive)
+            .Select(x => x.Id)
+            .ToListAsync();
+    }
+    public async Task<List<int>> GetAdminIdsAsync()
+    {
+        return await _context.Students
+            .AsNoTracking()
+            .Where(x => x.Role == "Admin" && x.IsActive)
+            .Select(x => x.Id)
+            .ToListAsync();
+    }
 
     public async Task<Notification?> UpdateAsync(Notification notification)
     {

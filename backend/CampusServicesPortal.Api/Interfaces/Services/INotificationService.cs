@@ -8,6 +8,8 @@ public interface INotificationService
     Task<NotificationDto?> GetByIdAsync(int id);
     Task<List<NotificationDto>> GetByStudentIdAsync(int studentId);
     Task<NotificationDto> CreateAsync(CreateNotificationDto dto);
+    Task CreateForAllStudentsAsync(string message);
+    Task CreateForAllAdminsAsync(string message);
     Task<NotificationDto?> UpdateReadStatusAsync(
         int id,
         UpdateNotificationReadStatusDto dto
