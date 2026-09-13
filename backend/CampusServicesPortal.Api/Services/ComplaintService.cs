@@ -13,7 +13,8 @@ public class ComplaintService : IComplaintService
     {
         "Pending",
         "In Progress",
-        "Resolved"
+        "Resolved",
+        "Rejected"
     };
 
     public ComplaintService(
@@ -166,17 +167,73 @@ public class ComplaintService : IComplaintService
         ComplaintDto? Data
     )> CreateComplaintAsync(CreateComplaintDto dto)
     {
-        ComplaintCategory? category =
-            await _complaintRepository
-                .GetCategoryByIdAsync(
-                    dto.ComplaintCategoryId
-                );
+        ComplaintCategory? category = null;
 
-        if (category is null || !category.IsActive)
+        // Predefined category selected
+        if (dto.ComplaintCategoryId.HasValue)
+        {
+            category =
+                await _complaintRepository
+                    .GetCategoryByIdAsync(
+                        dto.ComplaintCategoryId.Value
+                    );
+
+            if (category is null || !category.IsActive)
+            {
+                return (
+                    false,
+                    "A valid active complaint category is required.",
+                    null
+                );
+            }
+        }
+        // Custom category entered
+        else if (!string.IsNullOrWhiteSpace(dto.CustomCategoryName))
+        {
+            string customCategoryName =
+                dto.CustomCategoryName.Trim();
+
+            if (customCategoryName.Length < 3)
+            {
+                return (
+                    false,
+                    "Custom complaint category must contain at least 3 characters.",
+                    null
+                );
+            }
+
+            category =
+                await _complaintRepository
+                    .GetCategoryByNameAsync(
+                        customCategoryName
+                    );
+
+            if (category is null)
+            {
+                category = new ComplaintCategory
+                {
+                    Name = customCategoryName,
+                    IsActive = true
+                };
+
+                category =
+                    await _complaintRepository
+                        .CreateCategoryAsync(category);
+            }
+            else if (!category.IsActive)
+            {
+                return (
+                    false,
+                    "This complaint category is currently inactive.",
+                    null
+                );
+            }
+        }
+        else
         {
             return (
                 false,
-                "A valid active complaint category is required.",
+                "Please select a complaint category or enter a custom category.",
                 null
             );
         }
@@ -184,8 +241,7 @@ public class ComplaintService : IComplaintService
         Complaint complaint = new()
         {
             StudentId = dto.StudentId,
-            ComplaintCategoryId =
-                dto.ComplaintCategoryId,
+            ComplaintCategoryId = category.Id,
             Description = dto.Description.Trim(),
             Status = "Pending",
             CreatedAt = DateTime.UtcNow,
@@ -233,12 +289,14 @@ public class ComplaintService : IComplaintService
         {
             return (
                 false,
-                "Status must be Pending, In Progress, or Resolved."
+                "Status must be Pending, In Progress, Resolved, or Rejected."
             );
         }
 
-        if (validStatus == "Resolved" &&
-            string.IsNullOrWhiteSpace(dto.ResolutionNote))
+        if (
+            validStatus == "Resolved" &&
+            string.IsNullOrWhiteSpace(dto.ResolutionNote)
+        )
         {
             return (
                 false,
@@ -246,7 +304,19 @@ public class ComplaintService : IComplaintService
             );
         }
 
+        if (
+            validStatus == "Rejected" &&
+            string.IsNullOrWhiteSpace(dto.ResolutionNote)
+        )
+        {
+            return (
+                false,
+                "A rejection reason is required when rejecting a complaint."
+            );
+        }
+
         complaint.Status = validStatus;
+
         complaint.ResolutionNote =
             string.IsNullOrWhiteSpace(dto.ResolutionNote)
                 ? null

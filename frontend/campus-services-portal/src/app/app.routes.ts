@@ -26,6 +26,7 @@ import { NotificationList } from './features/notifications/notification-list/not
 import { StudentList } from './features/students/student-list/student-list';
 import { StudentManagement } from './features/admin/student-management/student-management';
 import { CertificateManagement } from './features/admin/certificate-management/certificate-management';
+import { ComplaintManagement } from './features/admin/complaint-management/complaint-management';
 export const routes: Routes = [
   {
     path: 'login',
@@ -121,6 +122,12 @@ export const routes: Routes = [
     component: CertificateManagement,
     canActivate: [authGuard, adminGuard],
     title: 'Certificate Management | Campus Services Portal'
+  },
+  {
+    path: 'admin/complaints',
+    component: ComplaintManagement,
+    canActivate: [authGuard, adminGuard],
+    title: 'Complaint Management | Campus Services Portal'
   },
 
   {

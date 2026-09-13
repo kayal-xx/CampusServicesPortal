@@ -9,7 +9,7 @@ public interface IComplaintRepository
     Task<List<ComplaintCategory>> GetAllCategoriesAsync();
 
     Task<ComplaintCategory?> GetCategoryByIdAsync(int id);
-
+    Task<ComplaintCategory?> GetCategoryByNameAsync(string name);
     Task<bool> CategoryNameExistsAsync(string name);
 
     Task<ComplaintCategory> CreateCategoryAsync(

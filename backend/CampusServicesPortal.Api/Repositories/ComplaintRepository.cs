@@ -39,7 +39,16 @@ public class ComplaintRepository : IComplaintRepository
         return await _context.ComplaintCategories
             .FirstOrDefaultAsync(c => c.Id == id);
     }
+    public async Task<ComplaintCategory?>
+        GetCategoryByNameAsync(string name)
+    {
+        string normalizedName = name.Trim().ToLower();
 
+        return await _context.ComplaintCategories
+            .FirstOrDefaultAsync(
+                c => c.Name.ToLower() == normalizedName
+            );
+    }
     public async Task<bool> CategoryNameExistsAsync(
         string name
     )
