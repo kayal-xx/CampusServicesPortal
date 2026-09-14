@@ -160,12 +160,11 @@ builder.Services.AddAuthorization();
 var app = builder.Build();
 
 // OpenAPI and Swagger UI
-if (app.Environment.IsDevelopment())
-{
+
     app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+
 
 app.UseHttpsRedirection();
 
