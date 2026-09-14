@@ -1,0 +1,169 @@
+<div class="fee-management-page">
+
+  <header class="topbar">
+    <div>
+      <h1>Fee Management</h1>
+      <p>Administration</p>
+    </div>
+  </header>
+
+  <div *ngIf="loading" class="message">
+    Loading fee records...
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <section *ngIf="!loading">
+
+    <div class="summary-grid">
+
+      <div class="summary-card">
+        <p>Total Records</p>
+        <h2>{{ totalRecords }}</h2>
+      </div>
+
+      <div class="summary-card">
+        <p>Paid</p>
+        <h2>{{ paidCount }}</h2>
+      </div>
+
+      <div class="summary-card">
+        <p>Unpaid</p>
+        <h2>{{ unpaidCount }}</h2>
+      </div>
+
+      <div class="summary-card">
+        <p>Outstanding</p>
+        <h2>
+          Rs. {{ outstandingAmount | number:'1.2-2' }}
+        </h2>
+      </div>
+
+    </div>
+
+    <div class="fee-card">
+
+      <div class="fee-card-header">
+        <div>
+          <h2>Fee Records</h2>
+          <p>Manage student fee payments</p>
+        </div>
+      </div>
+
+      <div class="filter-bar">
+
+        <input
+          type="text"
+          [(ngModel)]="searchText"
+          placeholder="Search by Student ID or Fee Type"
+          class="search-input"
+        />
+
+        <select
+          [(ngModel)]="statusFilter"
+          class="status-filter">
+
+          <option value="All">All Status</option>
+          <option value="Paid">Paid</option>
+          <option value="Unpaid">Unpaid</option>
+
+        </select>
+
+      </div>
+
+      <div class="table-wrapper">
+
+        <table>
+
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Student ID</th>
+              <th>Fee Type</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Paid Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            <tr *ngFor="let fee of filteredFees">
+
+              <td>{{ fee.id }}</td>
+
+              <td>{{ fee.studentId }}</td>
+
+              <td>{{ fee.feeType }}</td>
+
+              <td>
+                Rs. {{ fee.amount | number:'1.2-2' }}
+              </td>
+
+              <td>
+                <span
+                  class="status"
+                  [class.paid]="fee.isPaid"
+                  [class.unpaid]="!fee.isPaid">
+
+                  {{ fee.isPaid ? 'Paid' : 'Unpaid' }}
+
+                </span>
+              </td>
+
+              <td>
+                {{ fee.paidAt
+                  ? (fee.paidAt | date:'MMM d, y')
+                  : '-'
+                }}
+              </td>
+
+              <td>
+
+                <button
+                  *ngIf="!fee.isPaid"
+                  class="action-button"
+                  (click)="markAsPaid(fee)">
+
+                  Mark as Paid
+
+                </button>
+
+                <span
+                  *ngIf="fee.isPaid"
+                  class="completed">
+
+                  Completed
+
+                </span>
+
+              </td>
+
+            </tr>
+
+            <tr *ngIf="fees.length === 0">
+
+              <td
+                colspan="7"
+                class="empty-state">
+
+                No fee records found.
+
+              </td>
+
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</div>

@@ -1,0 +1,367 @@
+<div class="lab-management-page">
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">ADMINISTRATION</p>
+      <h1>Lab Management</h1>
+      <p>Manage laboratories and review student bookings.</p>
+    </div>
+
+    <div class="header-actions">
+      <button class="refresh-btn" type="button" (click)="loadLabs(); loadBookings()">
+        Refresh
+      </button>
+
+      <button class="add-btn" type="button" (click)="openAddLab()">
+        + Add Lab
+      </button>
+    </div>
+  </div>
+
+  <!-- MESSAGES -->
+  <div class="messages">
+    <div class="success-message" *ngIf="successMessage">
+      {{ successMessage }}
+    </div>
+
+    <div class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+  </div>
+
+  <!-- LAB FORM -->
+  <div class="lab-form-card" *ngIf="showLabForm">
+
+    <div class="section-title">
+      <div>
+        <p class="eyebrow">LABORATORY</p>
+        <h2>{{ editingLabId ? 'Edit Lab' : 'Add New Lab' }}</h2>
+      </div>
+    </div>
+
+    <div class="form-grid">
+
+      <div class="form-group">
+        <label for="labName">Lab Name</label>
+        <input
+          id="labName"
+          type="text"
+          [(ngModel)]="labName"
+          placeholder="Enter lab name"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="labLocation">Location</label>
+        <input
+          id="labLocation"
+          type="text"
+          [(ngModel)]="labLocation"
+          placeholder="Enter lab location"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="labCapacity">Capacity</label>
+        <input
+          id="labCapacity"
+          type="number"
+          min="1"
+          [(ngModel)]="labCapacity"
+        />
+      </div>
+
+      <div class="form-group checkbox-group">
+        <label>
+          <input
+            type="checkbox"
+            [(ngModel)]="labIsActive"
+          />
+          Lab Available
+        </label>
+      </div>
+
+    </div>
+
+    <div class="form-actions">
+      <button
+        class="save-btn"
+        type="button"
+        (click)="saveLab()"
+        [disabled]="loading"
+      >
+        {{ editingLabId ? 'Update Lab' : 'Create Lab' }}
+      </button>
+
+      <button
+        class="cancel-btn"
+        type="button"
+        (click)="cancelLabForm()"
+      >
+        Cancel
+      </button>
+    </div>
+
+  </div>
+
+  <!-- LABS SECTION -->
+  <section class="section">
+
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">LABORATORIES</p>
+        <h2>Available Labs</h2>
+      </div>
+
+      <span class="count-badge">
+        {{ labs.length }} Labs
+      </span>
+    </div>
+
+    <div class="empty-state" *ngIf="!loading && labs.length === 0">
+      <h3>No labs found</h3>
+      <p>No active laboratories are currently available.</p>
+    </div>
+
+    <div class="lab-grid" *ngIf="labs.length > 0">
+
+      <article class="lab-card" *ngFor="let lab of labs">
+
+        <div class="lab-card-top">
+          <div>
+            <span class="lab-id">Lab #{{ lab.id }}</span>
+            <h3>{{ lab.name }}</h3>
+          </div>
+
+          <span
+            class="availability"
+            [class.available]="lab.isActive"
+            [class.unavailable]="!lab.isActive"
+          >
+            {{ lab.isActive ? 'Available' : 'Unavailable' }}
+          </span>
+        </div>
+
+        <div class="lab-info">
+          <div>
+            <span>Location</span>
+            <strong>{{ lab.location }}</strong>
+          </div>
+
+          <div>
+            <span>Capacity</span>
+            <strong>{{ lab.capacity }} Students</strong>
+          </div>
+        </div>
+
+        <div class="lab-actions">
+
+          <button
+            class="edit-btn"
+            type="button"
+            (click)="openEditLab(lab)"
+          >
+            Edit
+          </button>
+
+          <button
+            class="deactivate-btn"
+            type="button"
+            (click)="deactivateLab(lab)"
+          >
+            Deactivate
+          </button>
+
+        </div>
+
+      </article>
+
+    </div>
+
+  </section>
+
+  <!-- BOOKING MANAGEMENT -->
+  <section class="section">
+
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">BOOKINGS</p>
+        <h2>Student Lab Bookings</h2>
+      </div>
+    </div>
+
+    <!-- FILTER -->
+    <div class="filter-card">
+
+      <label for="statusFilter">
+        Filter by status
+      </label>
+
+      <select
+        id="statusFilter"
+        [(ngModel)]="selectedStatus"
+        (change)="loadBookings()"
+      >
+        <option value="">All Bookings</option>
+        <option value="Pending">Pending</option>
+        <option value="Approved">Approved</option>
+        <option value="Rejected">Rejected</option>
+        <option value="Cancelled">Cancelled</option>
+      </select>
+
+    </div>
+
+    <div class="loading" *ngIf="loading">
+      Loading lab bookings...
+    </div>
+
+    <div
+      class="empty-state"
+      *ngIf="!loading && bookings.length === 0"
+    >
+      <h3>No lab bookings found</h3>
+      <p>There are currently no lab reservations to display.</p>
+    </div>
+
+    <div
+      class="booking-list"
+      *ngIf="!loading && bookings.length > 0"
+    >
+
+      <article
+        class="booking-card"
+        *ngFor="let booking of bookings"
+      >
+
+        <div class="booking-top">
+
+          <div>
+            <span class="booking-id">
+              Booking #{{ booking.id }}
+            </span>
+
+            <h2>{{ booking.labName }}</h2>
+
+            <p class="student-name">
+              Student: {{ booking.studentName }}
+            </p>
+          </div>
+
+          <span
+            class="status"
+            [ngClass]="getStatusClass(booking.status)"
+          >
+            {{ booking.status }}
+          </span>
+
+        </div>
+
+        <div class="booking-details">
+
+          <div>
+            <span>Student ID</span>
+            <strong>{{ booking.studentId }}</strong>
+          </div>
+
+          <div>
+            <span>Date</span>
+            <strong>
+              {{ booking.bookingDate | date:'mediumDate' }}
+            </strong>
+          </div>
+
+          <div>
+            <span>Start Time</span>
+            <strong>{{ booking.startTime }}</strong>
+          </div>
+
+          <div>
+            <span>End Time</span>
+            <strong>{{ booking.endTime }}</strong>
+          </div>
+
+        </div>
+
+        <!-- REJECTION REASON -->
+        <div
+          class="rejection-reason"
+          *ngIf="
+            booking.status === 'Rejected' &&
+            booking.rejectionReason
+          "
+        >
+          <strong>Rejection Reason</strong>
+          <p>{{ booking.rejectionReason }}</p>
+        </div>
+
+        <!-- APPROVE / REJECT -->
+        <div
+          class="actions"
+          *ngIf="booking.status === 'Pending'"
+        >
+
+          <button
+            class="approve-btn"
+            type="button"
+            (click)="approveBooking(booking)"
+          >
+            Approve
+          </button>
+
+          <button
+            class="reject-btn"
+            type="button"
+            (click)="startReject(booking)"
+          >
+            Reject
+          </button>
+
+        </div>
+
+        <!-- REJECTION FORM -->
+        <div
+          class="reject-form"
+          *ngIf="rejectionBookingId === booking.id"
+        >
+
+          <label for="rejectionReason">
+            Rejection Reason
+          </label>
+
+          <textarea
+            id="rejectionReason"
+            [(ngModel)]="rejectionReason"
+            rows="3"
+            placeholder="Enter the reason for rejecting this booking"
+          ></textarea>
+
+          <div class="reject-form-actions">
+
+            <button
+              class="confirm-reject-btn"
+              type="button"
+              (click)="rejectBooking(booking)"
+            >
+              Confirm Reject
+            </button>
+
+            <button
+              class="cancel-btn"
+              type="button"
+              (click)="cancelReject()"
+            >
+              Cancel
+            </button>
+
+          </div>
+
+        </div>
+
+      </article>
+
+    </div>
+
+  </section>
+
+</div>

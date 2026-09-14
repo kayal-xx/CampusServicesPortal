@@ -1,0 +1,527 @@
+<div class="management-page">
+
+  <!-- PAGE HEADER -->
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">ADMIN PORTAL</p>
+      <h1>Hostel Management</h1>
+      <p>Manage hostels, rooms and student applications.</p>
+    </div>
+
+    <div class="header-actions">
+      <button
+        type="button"
+        class="secondary-button"
+        (click)="loadHostels()"
+        [disabled]="loading">
+        ↻ Refresh
+      </button>
+
+      <button
+        type="button"
+        class="primary-button"
+        (click)="openAddHostel()">
+        + Add Hostel
+      </button>
+    </div>
+  </header>
+
+  <!-- MESSAGES -->
+  <div class="message success" *ngIf="successMessage">
+    {{ successMessage }}
+  </div>
+
+  <div class="message error" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <!-- HOSTEL FORM -->
+  <section class="form-card" *ngIf="showHostelForm">
+    <div class="section-title">
+      <h2>{{ editingHostelId ? 'Edit Hostel' : 'Add New Hostel' }}</h2>
+    </div>
+
+    <div class="form-grid">
+
+      <div class="form-group">
+        <label for="hostelName">Hostel Name</label>
+        <input
+          id="hostelName"
+          type="text"
+          [(ngModel)]="hostelName"
+          placeholder="Enter hostel name">
+      </div>
+
+      <div class="form-group">
+        <label for="hostelLocation">Location</label>
+        <input
+          id="hostelLocation"
+          type="text"
+          [(ngModel)]="hostelLocation"
+          placeholder="Enter hostel location">
+      </div>
+
+    </div>
+
+    <div class="form-actions">
+      <button
+        type="button"
+        class="cancel-button"
+        (click)="cancelHostelForm()">
+        Cancel
+      </button>
+
+      <button
+        type="button"
+        class="primary-button"
+        (click)="saveHostel()"
+        [disabled]="loading">
+        {{ editingHostelId ? 'Update Hostel' : 'Create Hostel' }}
+      </button>
+    </div>
+  </section>
+
+  <!-- HOSTELS -->
+  <section class="section-block">
+
+    <div class="section-heading">
+      <div>
+        <h2>Hostels</h2>
+        <p>Manage hostel information and room availability.</p>
+      </div>
+    </div>
+
+    <div
+      class="hostel-grid"
+      *ngIf="hostels.length > 0">
+
+      <article
+        class="hostel-card"
+        *ngFor="let hostel of hostels">
+
+        <div class="hostel-card-header">
+          <div>
+            <span class="hostel-label">HOSTEL</span>
+            <h3>{{ hostel.name }}</h3>
+            <p>📍 {{ hostel.location }}</p>
+          </div>
+
+          <span
+            class="active-badge"
+            [class.inactive]="!hostel.isActive">
+            {{ hostel.isActive ? 'Active' : 'Inactive' }}
+          </span>
+        </div>
+
+        <!-- ROOM STATS -->
+        <div class="room-stats">
+
+          <div class="stat-box">
+            <span>Total Rooms</span>
+            <strong>
+              {{
+                selectedHostelId === hostel.id
+                  ? getTotalRooms()
+                  : '—'
+              }}
+            </strong>
+          </div>
+
+          <div class="stat-box available">
+            <span>Available</span>
+            <strong>
+              {{
+                selectedHostelId === hostel.id
+                  ? getAvailableRooms()
+                  : '—'
+              }}
+            </strong>
+          </div>
+
+          <div class="stat-box full">
+            <span>Full</span>
+            <strong>
+              {{
+                selectedHostelId === hostel.id
+                  ? getOccupiedRooms()
+                  : '—'
+              }}
+            </strong>
+          </div>
+
+        </div>
+
+        <!-- HOSTEL ACTIONS -->
+        <div class="hostel-actions">
+
+          <button
+            type="button"
+            class="secondary-button"
+            (click)="selectHostel(hostel.id)">
+            View Rooms
+          </button>
+
+          <button
+            type="button"
+            class="edit-button"
+            (click)="openEditHostel(hostel)">
+            ✏ Edit
+          </button>
+
+          <button
+            type="button"
+            class="danger-button"
+            *ngIf="hostel.isActive"
+            (click)="deactivateHostel(hostel)">
+            Deactivate
+          </button>
+
+        </div>
+
+        <!-- ROOMS -->
+        <div
+          class="rooms-section"
+          *ngIf="selectedHostelId === hostel.id">
+
+          <div class="rooms-header">
+            <div>
+              <h4>Rooms</h4>
+              <p>
+                {{ rooms.length }} room(s)
+              </p>
+            </div>
+
+            <button
+              type="button"
+              class="small-primary-button"
+              (click)="openAddRoom(hostel.id)">
+              + Add Room
+            </button>
+          </div>
+
+          <!-- ROOM FORM -->
+          <div
+            class="room-form"
+            *ngIf="showRoomForm && roomHostelId === hostel.id">
+
+            <div class="form-group">
+              <label>Room Number</label>
+
+              <input
+                type="text"
+                [(ngModel)]="roomNumber"
+                placeholder="e.g. A101">
+            </div>
+
+            <div class="form-group">
+              <label>Capacity</label>
+
+              <input
+                type="number"
+                min="1"
+                [(ngModel)]="roomCapacity">
+            </div>
+
+            <div class="form-actions">
+
+              <button
+                type="button"
+                class="cancel-button"
+                (click)="cancelRoomForm()">
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                class="primary-button"
+                (click)="saveRoom()"
+                [disabled]="loading">
+                {{ editingRoomId ? 'Update Room' : 'Create Room' }}
+              </button>
+
+            </div>
+          </div>
+
+          <!-- ROOM LIST -->
+          <div
+            class="room-list"
+            *ngIf="rooms.length > 0">
+
+            <div
+              class="room-row"
+              *ngFor="let room of rooms">
+
+              <div class="room-info">
+                <strong>Room {{ room.roomNumber }}</strong>
+
+                <span>
+                  Capacity: {{ room.capacity }}
+                </span>
+
+                <span>
+                  Occupied: {{ room.occupiedCount }}
+                </span>
+              </div>
+
+              <div class="room-status-area">
+
+                <span
+                  class="room-status"
+                  [class.available]="room.isAvailable"
+                  [class.full]="!room.isAvailable">
+
+                  {{ room.isAvailable ? 'Available' : 'Full' }}
+
+                </span>
+
+                <button
+                  type="button"
+                  class="edit-button small"
+                  (click)="openEditRoom(room)">
+                  ✏
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <div
+            class="room-empty"
+            *ngIf="rooms.length === 0">
+
+            <p>No rooms added yet.</p>
+
+            <button
+              type="button"
+              class="small-primary-button"
+              (click)="openAddRoom(hostel.id)">
+              + Add First Room
+            </button>
+
+          </div>
+
+        </div>
+
+      </article>
+
+    </div>
+
+    <div
+      class="empty"
+      *ngIf="hostels.length === 0 && !loading">
+
+      <h2>No hostels found</h2>
+      <p>Create your first hostel using the Add Hostel button.</p>
+
+    </div>
+
+  </section>
+
+  <!-- APPLICATION MANAGEMENT -->
+  <section class="section-block applications-section">
+
+    <div class="section-heading">
+      <div>
+        <h2>Hostel Applications</h2>
+        <p>Review and manage student hostel applications.</p>
+      </div>
+    </div>
+
+    <!-- FILTER -->
+    <div class="filters">
+
+      <label for="statusFilter">
+        Filter by status
+      </label>
+
+      <select
+        id="statusFilter"
+        [(ngModel)]="selectedStatus"
+        (change)="loadApplications()">
+
+        <option value="">All Applications</option>
+        <option value="Pending">Pending</option>
+        <option value="Approved">Approved</option>
+        <option value="Rejected">Rejected</option>
+        <option value="Room Assigned">Room Assigned</option>
+
+      </select>
+
+    </div>
+
+    <!-- LOADING -->
+    <div
+      class="loading"
+      *ngIf="loading">
+
+      Loading...
+
+    </div>
+
+    <!-- APPLICATIONS -->
+    <div
+      class="application-grid"
+      *ngIf="!loading && applications.length > 0">
+
+      <article
+        class="application-card"
+        *ngFor="let application of applications">
+
+        <div class="card-header">
+
+          <div>
+            <span class="application-number">
+              Application #{{ application.id }}
+            </span>
+
+            <h3>{{ application.studentName }}</h3>
+          </div>
+
+          <span
+            class="status"
+            [class.pending]="application.status === 'Pending'"
+            [class.approved]="application.status === 'Approved'"
+            [class.rejected]="application.status === 'Rejected'"
+            [class.assigned]="application.status === 'Room Assigned'">
+
+            {{ application.status }}
+
+          </span>
+
+        </div>
+
+        <div class="details">
+
+          <div>
+            <span>Hostel</span>
+            <strong>{{ application.hostelName }}</strong>
+          </div>
+
+          <div>
+            <span>Semester</span>
+            <strong>{{ application.semester }}</strong>
+          </div>
+
+          <div>
+            <span>Applied On</span>
+            <strong>
+              {{ application.createdAt | date:'dd MMM yyyy' }}
+            </strong>
+          </div>
+
+          <div>
+            <span>Room</span>
+            <strong>
+              {{ application.roomNumber || 'Not assigned' }}
+            </strong>
+          </div>
+
+        </div>
+
+        <div class="requirements">
+
+          <span>Special Requirements</span>
+
+          <p>
+            {{ application.specialRequirements || 'None provided' }}
+          </p>
+
+        </div>
+
+        <!-- REJECTION REASON -->
+        <div
+          class="rejection-reason"
+          *ngIf="
+            application.status === 'Rejected' &&
+            application.rejectionReason
+          ">
+
+          <strong>Rejection Reason</strong>
+
+          <p>
+            {{ application.rejectionReason }}
+          </p>
+
+        </div>
+
+        <!-- REJECT FORM -->
+        <div
+          class="reject-form"
+          *ngIf="rejectionApplicationId === application.id">
+
+          <label>
+            Rejection Reason *
+          </label>
+
+          <textarea
+            [(ngModel)]="rejectionReason"
+            rows="3"
+            maxlength="500"
+            placeholder="Enter rejection reason...">
+          </textarea>
+
+          <div class="reject-actions">
+
+            <button
+              type="button"
+              class="cancel-button"
+              (click)="cancelReject()">
+              Cancel
+            </button>
+
+            <button
+              type="button"
+              class="reject-confirm-button"
+              (click)="rejectApplication(application)">
+              Confirm Rejection
+            </button>
+
+          </div>
+
+        </div>
+
+        <!-- ACTIONS -->
+        <div
+          class="card-actions"
+          *ngIf="
+            application.status === 'Pending' &&
+            rejectionApplicationId !== application.id
+          ">
+
+          <button
+            type="button"
+            class="approve-button"
+            (click)="approveApplication(application)">
+            ✓ Approve
+          </button>
+
+          <button
+            type="button"
+            class="reject-button"
+            (click)="startReject(application)">
+            ✕ Reject
+          </button>
+
+        </div>
+
+      </article>
+
+    </div>
+
+    <div
+      class="empty"
+      *ngIf="!loading && applications.length === 0">
+
+      <h2>No applications found</h2>
+
+      <p>
+        There are no applications for the selected filter.
+      </p>
+
+    </div>
+
+  </section>
+
+</div>

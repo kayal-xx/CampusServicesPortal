@@ -1,0 +1,15 @@
+.main-content {
+  min-height: 100vh;
+  margin-left: 264px;
+}
+
+.main-content.login-main {
+  margin-left: 0;
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .main-content {
+    margin-left: 0;
+  }
+}
