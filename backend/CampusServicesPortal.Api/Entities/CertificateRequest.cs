@@ -13,7 +13,7 @@ public class CertificateRequest
     public int Copies { get; set; } = 1;
 
     public string Status { get; set; } = "Pending";
-
+    public string RejectionReason { get; set; } = string.Empty;
     public DateTime RequestedAt { get; set; } = DateTime.UtcNow;
 
     public Student? Student { get; set; }

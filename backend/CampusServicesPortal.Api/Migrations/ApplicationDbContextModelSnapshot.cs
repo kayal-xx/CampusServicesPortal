@@ -41,6 +41,10 @@ namespace CampusServicesPortal.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("RejectionReason")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("RequestedAt")
                         .HasColumnType("datetime2");
 
@@ -160,6 +164,13 @@ namespace CampusServicesPortal.Api.Migrations
                     b.Property<DateTime>("RegisteredAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("RejectReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("StudentId")
                         .HasColumnType("int");
 
@@ -241,6 +252,10 @@ namespace CampusServicesPortal.Api.Migrations
                     b.Property<int>("HostelId")
                         .HasColumnType("int");
 
+                    b.Property<string>("RejectionReason")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("RoomId")
                         .HasColumnType("int");
 
@@ -314,6 +329,10 @@ namespace CampusServicesPortal.Api.Migrations
                     b.Property<int>("LabId")
                         .HasColumnType("int");
 
+                    b.Property<string>("RejectionReason")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<TimeSpan>("StartTime")
                         .HasColumnType("time");
 
@@ -359,6 +378,41 @@ namespace CampusServicesPortal.Api.Migrations
                     b.HasIndex("StudentId");
 
                     b.ToTable("Notifications");
+                });
+
+            modelBuilder.Entity("CampusServicesPortal.Api.Entities.PasswordResetToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Otp")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("StudentId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("PasswordResetTokens");
                 });
 
             modelBuilder.Entity("CampusServicesPortal.Api.Entities.Room", b =>
@@ -538,6 +592,17 @@ namespace CampusServicesPortal.Api.Migrations
                 });
 
             modelBuilder.Entity("CampusServicesPortal.Api.Entities.Notification", b =>
+                {
+                    b.HasOne("CampusServicesPortal.Api.Entities.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("CampusServicesPortal.Api.Entities.PasswordResetToken", b =>
                 {
                     b.HasOne("CampusServicesPortal.Api.Entities.Student", "Student")
                         .WithMany()

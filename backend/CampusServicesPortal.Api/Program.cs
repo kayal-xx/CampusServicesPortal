@@ -1,26 +1,178 @@
+using System.Text;
 using CampusServicesPortal.Api.Data;
+using CampusServicesPortal.Api.Services;
+using CampusServicesPortal.Api.Interfaces.Repositories;
+using CampusServicesPortal.Api.Interfaces.Services;
+using CampusServicesPortal.Api.Repositories;
+using CampusServicesPortal.Api.Security;
+using CampusServicesPortal.Api.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Controllers
 builder.Services.AddControllers();
 
+// OpenAPI and Swagger
 builder.Services.AddOpenApi();
+builder.Services.AddEndpointsApiExplorer();
 
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition(
+        "bearer",
+        new OpenApiSecurityScheme
+        {
+            Type = SecuritySchemeType.Http,
+            Scheme = "bearer",
+            BearerFormat = "JWT",
+            Description = "Enter the JWT token."
+        });
+
+    options.AddSecurityRequirement(document =>
+        new OpenApiSecurityRequirement
+        {
+            [
+                new OpenApiSecuritySchemeReference(
+                    "bearer",
+                    document)
+            ] = []
+        });
+});
+
+// Database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection")
-    )
-);
+{
+    var connectionString =
+        builder.Configuration.GetConnectionString(
+            "DefaultConnection"
+        );
+
+    options.UseSqlServer(connectionString);
+});
+
+// Member 1 — Authentication and Student
+builder.Services.AddScoped<StudentRepository>();
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<StudentService>();
+builder.Services.AddScoped<JwtTokenService>();
+
+// Member 1 — Hostel
+builder.Services.AddScoped<HostelRepository>();
+builder.Services.AddScoped<HostelService>();
+
+// Member 1 — Lab
+builder.Services.AddScoped<LabRepository>();
+builder.Services.AddScoped<LabService>();
+
+// Member 2 — Event
+builder.Services.AddScoped<IEventRepository, EventRepository>();
+builder.Services.AddScoped<IEventService, EventService>();
+
+// Member 2 — Complaint
+builder.Services.AddScoped<IComplaintRepository, ComplaintRepository>();
+builder.Services.AddScoped<IComplaintService, ComplaintService>();
+
+// Member 2 — Certificate
+builder.Services.AddScoped<
+    ICertificateRepository,
+    CertificateRepository>();
+
+builder.Services.AddScoped<
+    ICertificateService,
+    CertificateService>();
+
+// Member 3 — Fee
+builder.Services.AddScoped<
+    IFeeRepository,
+    FeeRepository>();
+
+builder.Services.AddScoped<
+    IFeeService,
+    FeeService>();
+
+// Member 3 — Notification
+builder.Services.AddScoped<
+    INotificationRepository,
+    NotificationRepository>();
+
+builder.Services.AddScoped<
+    INotificationService,
+    NotificationService>();
+
+// Member 3 — Dashboard
+builder.Services.AddScoped<
+    IDashboardService,
+    DashboardService>();
+
+builder.Services.AddScoped<EmailService>();
+
+// Angular CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AngularClient", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:4200")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
+// JWT authentication
+var jwtKey = builder.Configuration["Jwt:Key"]
+    ?? throw new InvalidOperationException(
+        "JWT key is not configured."
+    );
+
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters =
+            new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+
+                ValidIssuer =
+                    builder.Configuration["Jwt:Issuer"],
+
+                ValidAudience =
+                    builder.Configuration["Jwt:Audience"],
+
+                IssuerSigningKey =
+                    new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(jwtKey)
+                    ),
+
+                ClockSkew = TimeSpan.Zero
+            };
+    });
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+// OpenAPI and Swagger UI
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("AngularClient");
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 

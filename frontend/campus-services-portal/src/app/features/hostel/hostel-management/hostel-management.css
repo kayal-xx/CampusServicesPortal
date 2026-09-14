@@ -1,0 +1,615 @@
+.management-page {
+  padding: 32px;
+  max-width: 1400px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 28px;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #2563eb;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 34px;
+  color: #111827;
+}
+
+.page-header p {
+  margin: 8px 0 0;
+  color: #6b7280;
+  font-size: 15px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+button {
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.primary-button,
+.small-primary-button {
+  background: #2563eb;
+  color: white;
+}
+
+.primary-button:hover,
+.small-primary-button:hover {
+  background: #1d4ed8;
+}
+
+.secondary-button {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.edit-button {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.edit-button.small {
+  padding: 7px 10px;
+}
+
+.danger-button,
+.reject-button,
+.reject-confirm-button {
+  background: #dc2626;
+  color: white;
+}
+
+.approve-button {
+  background: #16a34a;
+  color: white;
+}
+
+.cancel-button {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.message {
+  padding: 13px 16px;
+  border-radius: 9px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.message.success {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.message.error {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* FORM */
+
+.form-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+}
+
+.section-title h2,
+.section-heading h2 {
+  margin: 0;
+  color: #111827;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.form-group label,
+.filters label,
+.reject-form label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #374151;
+}
+
+.form-group input,
+.filters select,
+.reject-form textarea {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 11px 12px;
+  font-size: 14px;
+  outline: none;
+  background: white;
+}
+
+.form-group input:focus,
+.filters select:focus,
+.reject-form textarea:focus {
+  border-color: #2563eb;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+/* SECTION */
+
+.section-block {
+  margin-bottom: 40px;
+}
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.section-heading p {
+  margin: 6px 0 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+/* HOSTELS */
+
+.hostel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 20px;
+}
+
+.hostel-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 22px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+}
+
+.hostel-card-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.hostel-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #6b7280;
+}
+
+.hostel-card h3 {
+  margin: 5px 0;
+  font-size: 21px;
+  color: #111827;
+}
+
+.hostel-card-header p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.active-badge {
+  height: fit-content;
+  padding: 5px 10px;
+  border-radius: 20px;
+  background: #dcfce7;
+  color: #166534;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.active-badge.inactive {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* ROOM STATS */
+
+.room-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.stat-box {
+  padding: 13px;
+  border-radius: 10px;
+  background: #f3f4f6;
+}
+
+.stat-box span {
+  display: block;
+  font-size: 11px;
+  color: #6b7280;
+  margin-bottom: 5px;
+}
+
+.stat-box strong {
+  font-size: 21px;
+  color: #111827;
+}
+
+.stat-box.available {
+  background: #ecfdf5;
+}
+
+.stat-box.available strong {
+  color: #15803d;
+}
+
+.stat-box.full {
+  background: #fef2f2;
+}
+
+.stat-box.full strong {
+  color: #dc2626;
+}
+
+.hostel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ROOMS */
+
+.rooms-section {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.rooms-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.rooms-header h4 {
+  margin: 0;
+  font-size: 17px;
+}
+
+.rooms-header p {
+  margin: 4px 0 0;
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.small-primary-button {
+  padding: 8px 12px;
+  font-size: 12px;
+}
+
+.room-form {
+  padding: 15px;
+  background: #f9fafb;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+
+.room-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.room-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 13px;
+  border: 1px solid #e5e7eb;
+  border-radius: 9px;
+}
+
+.room-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.room-info strong {
+  color: #111827;
+}
+
+.room-info span {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.room-status-area {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.room-status {
+  padding: 5px 9px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.room-status.available {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.room-status.full {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.room-empty {
+  text-align: center;
+  padding: 20px;
+  background: #f9fafb;
+  border-radius: 10px;
+  color: #6b7280;
+}
+
+/* APPLICATIONS */
+
+.applications-section {
+  margin-top: 20px;
+}
+
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.filters select {
+  min-width: 180px;
+}
+
+.application-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 18px;
+}
+
+.application-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 18px;
+}
+
+.application-number {
+  font-size: 11px;
+  color: #6b7280;
+  font-weight: 700;
+}
+
+.card-header h3 {
+  margin: 5px 0 0;
+  font-size: 19px;
+}
+
+.status {
+  height: fit-content;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  background: #f3f4f6;
+}
+
+.status.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status.approved,
+.status.assigned {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status.rejected {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.details div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.details span,
+.requirements > span {
+  font-size: 11px;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.details strong {
+  font-size: 13px;
+}
+
+.requirements {
+  margin-top: 18px;
+  padding-top: 15px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.requirements p {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: #4b5563;
+}
+
+.rejection-reason {
+  margin-top: 15px;
+  padding: 13px;
+  border-radius: 9px;
+  background: #fff1f2;
+  color: #991b1b;
+}
+
+.rejection-reason strong {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 13px;
+}
+
+.rejection-reason p {
+  margin: 0;
+  font-size: 13px;
+}
+
+.reject-form {
+  margin-top: 15px;
+  padding: 15px;
+  background: #fff7ed;
+  border-radius: 10px;
+}
+
+.reject-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 7px;
+  resize: vertical;
+}
+
+.reject-actions,
+.card-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.card-actions button {
+  flex: 1;
+}
+
+.loading {
+  text-align: center;
+  padding: 35px;
+  color: #6b7280;
+}
+
+.empty {
+  text-align: center;
+  padding: 40px;
+  background: white;
+  border: 1px dashed #d1d5db;
+  border-radius: 12px;
+  color: #6b7280;
+}
+
+.empty h2 {
+  color: #374151;
+}
+
+/* MOBILE */
+
+@media (max-width: 900px) {
+  .management-page {
+    padding: 20px;
+  }
+
+  .page-header {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hostel-grid,
+  .application-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .room-stats,
+  .details {
+    grid-template-columns: 1fr;
+  }
+
+  .hostel-actions {
+    flex-direction: column;
+  }
+
+  .hostel-actions button {
+    width: 100%;
+  }
+
+  .filters {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .filters select {
+    width: 100%;
+  }
+}
