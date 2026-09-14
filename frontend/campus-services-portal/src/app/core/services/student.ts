@@ -6,6 +6,7 @@ import {
   UpdateStudentProfile
 } from '../models/student.model';
 import { Auth } from './auth';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -13,8 +14,7 @@ import { Auth } from './auth';
 export class StudentService {
   private readonly http = inject(HttpClient);
   private readonly authService = inject(Auth);
-  private readonly apiUrl = 'http://localhost:5266/api/students';
-
+private readonly apiUrl = `${environment.apiUrl}/students`;
   getMyProfile(): Observable<StudentProfile> {
     const studentId = this.getCurrentStudentId();
 
