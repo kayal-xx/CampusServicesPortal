@@ -55,7 +55,7 @@ public class NotificationRepository : INotificationRepository
     {
         return await _context.Students
             .AsNoTracking()
-            .Where(x => x.Role == "Admin" && x.IsActive)
+          //  .Where(x => x.Role == "Admin" && x.IsActive)
             .Select(x => x.Id)
             .ToListAsync();
     }
