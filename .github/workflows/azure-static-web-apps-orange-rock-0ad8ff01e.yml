@@ -31,7 +31,7 @@ jobs:
         working-directory: ./frontend/campus-services-portal
         run: npm run build
 
-              - name: Verify Angular build output
+      - name: Verify Angular build output
         run: |
           echo "Checking Angular build output..."
           ls -la ./frontend/campus-services-portal/dist/campus-services-portal/browser
